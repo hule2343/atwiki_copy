@@ -1,0 +1,21 @@
+{
+  "members": [
+    {
+      "id": "0",
+      "name": "taira",
+      "address":"aaa402262@gmail.com",
+      "task":"atwiki"
+    }
+  ],
+
+  "workday":[
+    {
+      "id":"0",
+      "day":  "2022/7/23",
+      "place":"事務所",
+      "rest":null
+    }
+  ]
+
+
+}
