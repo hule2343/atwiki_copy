@@ -3,19 +3,87 @@
     {
       "id": "0",
       "name": "taira",
-      "address":"aaa402262@gmail.com",
-      "task":"atwiki"
+      "address": "aaa402262@gmail.com",
+      "task": "atwiki"
     }
   ],
-
-  "workday":[
+  "workday": [
     {
-      "id":"0",
-      "day":  "2022/7/23",
-      "place":"事務所",
-      "rest":null
+      "id": "0",
+      "day": "2022/7/23",
+      "place": "事務所"
+    },
+    {
+      "id": "1",
+      "day": "2022/7/30",
+      "place": "図書館"
+    }
+  ],
+  "rest": [
+    {
+      "id": "0",
+      "name": "taira"
+    },
+    {
+      "id": "1",
+      "name": "taia"
+    }
+  ],
+  "log": [
+    {
+      "id": 1,
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 19:40:19 GMT+0900 (Japan Standard Time)"
+    },
+    {
+      "id": 2,
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 19:44:27 GMT+0900 (Japan Standard Time)"
+    },
+    {
+      "id": 3,
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:04:05 GMT+0900 (Japan Standard Time)"
+    },
+    {
+      "id": 4,
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:05:46 GMT+0900 (Japan Standard Time)"
+    },
+    {
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:08:43 GMT+0900 (Japan Standard Time)",
+      "id": 5
+    },
+    {
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:08:45 GMT+0900 (Japan Standard Time)",
+      "id": 6
+    },
+    {
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:08:47 GMT+0900 (Japan Standard Time)",
+      "id": 7
+    },
+    {
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:08:49 GMT+0900 (Japan Standard Time)",
+      "id": 8
+    },
+    {
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:08:52 GMT+0900 (Japan Standard Time)",
+      "id": 9
+    },
+    {
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:08:54 GMT+0900 (Japan Standard Time)",
+      "id": 10
+    },
+    {
+      "url": "http://localhost:3100/rest",
+      "date": "Sat Jul 23 2022 20:09:06 GMT+0900 (Japan Standard Time)",
+      "id": 11
     }
   ]
-
-
 }

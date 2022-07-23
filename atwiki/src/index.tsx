@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 
-import { MemberList, WorkDayList, Log } from "./Http";
+import { MemberList, WorkDayList, Loglist } from "./Http";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
@@ -15,7 +15,7 @@ root.render(
         <WorkDayList />
       </div>
       <div>
-        <Log />
+        <Loglist />
       </div>
     </div>
   </React.StrictMode>
