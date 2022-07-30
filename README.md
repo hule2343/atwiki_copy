@@ -12,3 +12,14 @@ Kangi Programmer's wiki　の機能を移行する
 --在籍者、過去に在籍していた人の連絡先記録
 - 編集ログ
 - ログイン機能
+## 設計
+- フロントエンド
+-- React
+- バックエンド
+-- Python(FastAPI)
+- DB
+-- MySQL
+- ReactとFastAPIの接続
+-- axios
+- ORM
+-- SQLAlchemy
