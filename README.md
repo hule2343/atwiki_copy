@@ -16,7 +16,7 @@ Kangi Programmer's wiki　の機能を移行する
 - フロントエンド
 -- React
 - バックエンド
--- Python(FastAPI)
+-- Python(FastAPI)?
 - DB
 -- MySQL
 - ReactとFastAPIの接続
