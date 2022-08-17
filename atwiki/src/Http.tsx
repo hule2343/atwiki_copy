@@ -1,5 +1,8 @@
 import React from "react";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 
 // モックサーバーのURL　db.json
 const membersUrl = "http://localhost:3100/members";
@@ -11,7 +14,10 @@ type Member = {
   id: number;
   name: string;
   address: string;
+  phonenumber: string;
   task: string;
+  absent: string;
+  is_student: boolean;
 };
 
 type WorkDay = {
@@ -27,6 +33,150 @@ type Log = {
   date: string;
 };
 
+type Form = {
+  id: number;
+  text: string;
+  enable: boolean;
+};
+
+type DayForm = {
+  id: number;
+  date: string | null;
+  enable: boolean;
+};
+
+const EditForm = (props: { id: number }) => {
+  axios.get(membersUrl, { params: { id: props.id } });
+  const [input, setInput] = React.useState<Form>({
+    id: props.id,
+    text: "",
+    enable: false,
+  });
+  React.useEffect(() => {
+    axios
+      .get(membersUrl, { params: { id: props.id } })
+      .then((response) => {
+        setInput((state) => ({
+          ...state,
+          text: response.data[0].task,
+        }));
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [props.id]);
+  const handleSubmit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setInput((state) => ({
+      ...state,
+      text: input.text,
+      enable: !input.enable,
+    }));
+    axios
+      .patch(membersUrl + "/" + props.id, {
+        task: input.text,
+      })
+      .then(() => {
+        console.log("更新完了");
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error);
+        }
+      });
+  };
+  const handleInput = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setInput((state) => ({
+      ...state,
+      enable: !input.enable,
+    }));
+  };
+
+  return (
+    <div>
+      <form>
+        {input.enable ? (
+          <div>
+            <input
+              onChange={(e) => {
+                setInput((state) => ({ ...state, text: e.target.value }));
+              }}
+              type="text"
+              value={input.text}
+            />
+            <button onClick={handleSubmit}>保存</button>
+          </div>
+        ) : (
+          <div>
+            <span>{input.text}</span>
+            <button onClick={handleInput}>編集</button>
+          </div>
+        )}
+      </form>
+    </div>
+  );
+};
+
+const EditDate = (props: { id: number }) => {
+  const [date, setDate] = React.useState<DayForm>({
+    id: props.id,
+    date: "",
+    enable: false,
+  });
+  React.useEffect(() => {
+    axios.get(membersUrl, { params: { id: props.id } }).then((response) => {
+      setDate((state) => ({ ...state, date: response.data[0].absent }));
+    });
+  }, [props.id]);
+  const handleSubmit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setDate((state) => ({ ...state, enable: !date.enable }));
+    axios
+      .patch(membersUrl + "/" + props.id, {
+        absent: date.date,
+      })
+      .then(() => {
+        setDate((state) => ({ ...state, date: date.date }));
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error);
+        }
+      });
+  };
+  const handleInput = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setDate((state) => ({ ...state, enable: !date.enable }));
+  };
+  const handleChange = (date: Date) => {
+    const stringDate = format(date, "yyyy/MM/dd");
+    setDate((state) => ({ ...state, date: stringDate }));
+  };
+
+  return (
+    <div>
+      <form>
+        {date.enable ? (
+          <div>
+            <label>
+              <i className="calendar alternate outline icon"></i>
+            </label>
+            <DatePicker onChange={handleChange} />
+            <button onClick={handleSubmit}>保存</button>
+          </div>
+        ) : (
+          <div>
+            {date.date != null ? <span>{date.date}</span> : <span></span>}
+            <button onClick={handleInput}>編集</button>
+          </div>
+        )}
+      </form>
+    </div>
+  );
+};
+
 export const MemberList: React.FC = () => {
   const [members, setMembers] = React.useState<Member[]>([]);
 
@@ -36,81 +186,51 @@ export const MemberList: React.FC = () => {
     });
   }, []);
 
+  const students = members.filter((members) => {
+    return members.is_student === true;
+  });
   return (
-    <table border={1}>
-      <thead>
-        <tr>
-          <th>名前</th>
-          <th>連絡</th>
-          <th>進捗状況・タスク</th>
-        </tr>
-      </thead>
-      <tbody>
-        {members.map((member) => (
-          <tr key={member.id}>
-            <td>{member.name}</td>
-            <td>{member.address}</td>
-            <td>{member.task}</td>
+    <div>
+      <table border={1}>
+        <thead>
+          <tr>
+            <th>名前</th>
+            <th>欠席予定</th>
+            <th>進捗状況</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-};
+        </thead>
+        <tbody>
+          {students.map((student) => (
+            <tr key={student.id}>
+              <td>{student.name}</td>
+              <td>
+                <EditDate id={student.id} />
+              </td>
+              <td>
+                <EditForm id={student.id} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-const applyRest = () => {
-  axios.post("http://localhost:3100/rest", { id: 2, name: "ttaira" });
-  window.location.reload();
-  LeaveLog("http://localhost:3100/rest");
-};
-
-const attendWork = () => {
-  axios.delete("http://localhost:3100/rest/2");
-  window.location.reload();
-  LeaveLog("http://localhost:3100/rest");
-};
-
-export const WorkDayList: React.FC = () => {
-  const [workdays, setWork] = React.useState<WorkDay[]>([]);
-  const [rest, setRest] = React.useState<Member[]>([]);
-
-  React.useEffect(() => {
-    axios.get(workdayUrl).then((response) => {
-      setWork(response.data);
-    });
-  }, []);
-
-  React.useEffect(() => {
-    axios.get(restUrl).then((response) => {
-      setRest(response.data);
-    });
-  }, []);
-
-  return (
-    <table border={1}>
-      <thead>
-        <tr>
-          <th>日付</th>
-          <th>場所</th>
-          <th>欠勤者</th>
-        </tr>
-      </thead>
-      <tbody>
-        {workdays.map((workday) => (
-          <tr key={workday.id}>
-            <td>{workday.day}</td>
-            <td>{workday.place}</td>
-            <td>
-              {rest.map((worker) => (
-                <li key={worker.id}>{worker.name}</li>
-              ))}
-              <button onClick={applyRest}>休む</button>
-              <button onClick={attendWork}>出席する</button>
-            </td>
+      <table border={1}>
+        <thead>
+          <tr>
+            <th>名前</th>
+            <th>連絡</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {members.map((member) => (
+            <tr key={member.id}>
+              <td>{member.name}</td>
+              <td>{member.address}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
