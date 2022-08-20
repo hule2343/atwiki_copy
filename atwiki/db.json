@@ -5,8 +5,8 @@
       "name": "taia",
       "address": "aaa402",
       "phonenumber": "00802010",
-      "task": "アフェリエイト",
-      "absent": "2022/08/19",
+      "task": "React",
+      "absent": "2022/08/27",
       "is_student": true
     },
     {
@@ -15,7 +15,7 @@
       "address": "aaa402",
       "phonenumber": "00802010",
       "task": "atttwiki",
-      "absent": "2022/09/02",
+      "absent": "2022/09/03",
       "is_student": true
     }
   ],
@@ -46,7 +46,21 @@
       "id": 1,
       "url": "http://localhost:3100/rest",
       "date": "Sat Jul 23 2022 19:40:19 GMT+0900 (Japan Standard Time)"
+    },
+    {
+      "url": "http://localhost:3100/members",
+      "date": "2022/08/20",
+      "id": 2
+    },
+    {
+      "url": "http://localhost:3100/members",
+      "date": "2022/08/20",
+      "id": 3
+    },
+    {
+      "url": "http://localhost:3100/members",
+      "date": "2022/08/20",
+      "id": 4
     }
-    
   ]
 }

@@ -6,8 +6,6 @@ import { format } from "date-fns";
 
 // モックサーバーのURL　db.json
 const membersUrl = "http://localhost:3100/members";
-const workdayUrl = "http://localhost:3100/workday";
-const restUrl = "http://localhost:3100/rest";
 const logUrl = "http://localhost:3100/log";
 
 type Member = {
@@ -18,13 +16,6 @@ type Member = {
   task: string;
   absent: string;
   is_student: boolean;
-};
-
-type WorkDay = {
-  id: number;
-  day: string;
-  place: string;
-  rest: Member[];
 };
 
 type Log = {
@@ -85,6 +76,7 @@ const EditForm = (props: { id: number }) => {
           console.log(error);
         }
       });
+    leaveLog(membersUrl);
   };
   const handleInput = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -145,6 +137,7 @@ const EditDate = (props: { id: number }) => {
           console.log(error);
         }
       });
+    leaveLog(membersUrl);
   };
   const handleInput = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -179,7 +172,6 @@ const EditDate = (props: { id: number }) => {
 
 export const MemberList: React.FC = () => {
   const [members, setMembers] = React.useState<Member[]>([]);
-
   React.useEffect(() => {
     axios.get(membersUrl).then((response) => {
       setMembers(response.data);
@@ -234,9 +226,9 @@ export const MemberList: React.FC = () => {
   );
 };
 
-const LeaveLog = (url: string) => {
+const leaveLog = (url: string) => {
   let now = new Date();
-  let date = now.toString();
+  let date = format(now, "yyyy/MM/dd");
   axios.post("http://localhost:3100/log", { url: url, date: date });
 };
 
