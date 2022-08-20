@@ -3,6 +3,12 @@ Kangi Programmer's wiki　の機能を移行する
 ## 概要
 - 現状あまり使われていないkangi atwikiの代替となるwebサイトを作成する。
 - ReactやHTTPプロトコル等のWebアプリを作成する際に必要な知識の勉強も兼ねる。
+## Getting Start
+- このリポジトリをクローン
+- yarnをインストール
+-`npm install -g yarn`
+- 必要なパッケージをインストール
+- `yarn add axios react-datepicker @types/react-datepicker date-fns json-server`
 ## 機能
 - 出欠管理
 -- 欠席者が欠席日を書き込める機能
