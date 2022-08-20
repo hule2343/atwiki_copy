@@ -19,7 +19,7 @@ Kangi Programmer's wiki　の機能を移行する
 -- Express
 - DB
 -- MySQL
-- ReactとFastAPIの接続
+- ReactとExpressの接続
 -- axios
 - ORM
 -- Prisma
