@@ -10,8 +10,8 @@ Kangi Programmer's wiki　の機能を移行する
 - 必要なパッケージをインストール
 - `yarn add axios react-datepicker @types/react-datepicker date-fns json-server`
 - プロジェクトを開始
-- プロジェクトのディレクトリにて`json-server db.json --port 3100 --routes routes.json`
-- もう一つコマンドラインを開きプロジェクトのディレクトリにて`yarn start`
+  - プロジェクトのディレクトリにて`json-server db.json --port 3100 --routes routes.json`
+  - もう一つコマンドラインを開きプロジェクトのディレクトリにて`yarn start`
 ## 機能
 - 出欠管理
 -- 欠席者が欠席日を書き込める機能
