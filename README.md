@@ -38,4 +38,7 @@ Kangi Programmer's wiki　の機能を移行する
 - src
   - index.tsx : このコードにReact Componentをexportして表示している
   - Http.tsx　: index.tsxにexportするComponentが書かれている
+  - controller : APIがモデルごとにファイルを分けて定義されている
+- prisma
+  - schema.prisma : DBのモデル定義が書かれている
 - その他のファイルについてはcreate-react-appしてから変更は加えていない(はず)
