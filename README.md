@@ -8,7 +8,7 @@ Kangi Programmer's wiki　の機能を移行する
 - yarnをインストール
 -`npm install -g yarn`
 - 必要なパッケージをインストール
-- `yarn add axios react-datepicker @types/react-datepicker date-fns json-server`
+- `yarn install`
 - プロジェクトを開始
   - プロジェクトのディレクトリにて`json-server db.json --port 3100 --routes routes.json`
   - もう一つコマンドラインを開きプロジェクトのディレクトリにて`yarn start`
