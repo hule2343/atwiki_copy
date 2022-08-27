@@ -11,7 +11,7 @@ const logUrl = "http://localhost:3100/log";
 type Member = {
   id: number;
   name: string;
-  address: string;
+  email: string;
   phonenumber: string;
   task: string;
   absent: string;
@@ -57,6 +57,7 @@ const EditForm = (props: { id: number }) => {
         console.log(error);
       });
   }, [props.id]);
+
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     setInput((state) => ({
@@ -78,6 +79,7 @@ const EditForm = (props: { id: number }) => {
       });
     leaveLog(membersUrl);
   };
+
   const handleInput = (e: React.MouseEvent) => {
     e.preventDefault();
     setInput((state) => ({
@@ -117,11 +119,13 @@ const EditDate = (props: { id: number }) => {
     date: "",
     enable: false,
   });
+
   React.useEffect(() => {
     axios.get(membersUrl, { params: { id: props.id } }).then((response) => {
       setDate((state) => ({ ...state, date: response.data[0].absent }));
     });
   }, [props.id]);
+
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     setDate((state) => ({ ...state, enable: !date.enable }));
@@ -139,10 +143,12 @@ const EditDate = (props: { id: number }) => {
       });
     leaveLog(membersUrl);
   };
+
   const handleInput = (e: React.MouseEvent) => {
     e.preventDefault();
     setDate((state) => ({ ...state, enable: !date.enable }));
   };
+
   const handleChange = (date: Date) => {
     const stringDate = format(date, "yyyy/MM/dd");
     setDate((state) => ({ ...state, date: stringDate }));
@@ -172,6 +178,7 @@ const EditDate = (props: { id: number }) => {
 
 export const MemberList: React.FC = () => {
   const [members, setMembers] = React.useState<Member[]>([]);
+
   React.useEffect(() => {
     axios.get(membersUrl).then((response) => {
       setMembers(response.data);
@@ -217,7 +224,7 @@ export const MemberList: React.FC = () => {
           {members.map((member) => (
             <tr key={member.id}>
               <td>{member.name}</td>
-              <td>{member.address}</td>
+              <td>{member.email}</td>
             </tr>
           ))}
         </tbody>
@@ -255,3 +262,5 @@ export const Loglist: React.FC = () => {
     </div>
   );
 };
+
+export const createUser = () => {};
