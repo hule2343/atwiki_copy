@@ -98,12 +98,22 @@ const EditForm = (props: { id: number }) => {
               type="text"
               value={input.text}
             />
-            <button onClick={handleSubmit}>保存</button>
+            <button
+              className="btn btn-outline-secondary mx-3"
+              onClick={handleSubmit}
+            >
+              保存
+            </button>
           </div>
         ) : (
           <div>
             <span>{input.text}</span>
-            <button onClick={handleInput}>編集</button>
+            <button
+              className="btn btn-outline-secondary mx-3"
+              onClick={handleInput}
+            >
+              編集
+            </button>
           </div>
         )}
       </form>
@@ -156,13 +166,25 @@ const EditDate = (props: { id: number }) => {
             <label>
               <i className="calendar alternate outline icon"></i>
             </label>
-            <DatePicker onChange={handleChange} />
-            <button onClick={handleSubmit}>保存</button>
+            <div className="d-inline-block">
+              <DatePicker onChange={handleChange} />
+            </div>
+            <button
+              className="btn btn-outline-secondary mx-3"
+              onClick={handleSubmit}
+            >
+              保存
+            </button>
           </div>
         ) : (
           <div>
             {date.date != null ? <span>{date.date}</span> : <span></span>}
-            <button onClick={handleInput}>編集</button>
+            <button
+              className="btn btn-outline-secondary mx-3"
+              onClick={handleInput}
+            >
+              編集
+            </button>
           </div>
         )}
       </form>
@@ -183,7 +205,7 @@ export const MemberList: React.FC = () => {
   });
   return (
     <div className="p-3">
-      <table className="table table-striped table-hover">
+      <table className="table table-striped table-hover table-bordered">
         <thead>
           <tr>
             <th>名前</th>
@@ -206,7 +228,7 @@ export const MemberList: React.FC = () => {
         </tbody>
       </table>
 
-      <table className="table table-striped">
+      <table className="table table-striped table-bordered">
         <thead>
           <tr>
             <th>名前</th>
