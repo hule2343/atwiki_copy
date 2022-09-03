@@ -1,12 +1,21 @@
 import React from "react";
-import axios from "axios";
+import axiosBase from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 
 // モックサーバーのURL　db.json
-const membersUrl = "http://localhost:3100/members";
-const logUrl = "http://localhost:3100/log";
+//const "/users" = "http://localhost:3100/members";
+//const logUrl = "http://localhost:3100/log";
+
+const axios = axiosBase.create({
+  baseURL: "http://localhost:3001",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 2000,
+  responseType: "json",
+});
 
 type Member = {
   id: number;
@@ -37,7 +46,7 @@ type DayForm = {
 };
 
 const EditForm = (props: { id: number }) => {
-  axios.get(membersUrl, { params: { id: props.id } });
+  axios.get("/users", { params: { id: props.id } });
   const [input, setInput] = React.useState<Form>({
     id: props.id,
     text: "",
@@ -45,7 +54,7 @@ const EditForm = (props: { id: number }) => {
   });
   React.useEffect(() => {
     axios
-      .get(membersUrl, { params: { id: props.id } })
+      .get("/users", { params: { id: props.id } })
       .then((response) => {
         setInput((state) => ({
           ...state,
@@ -66,7 +75,7 @@ const EditForm = (props: { id: number }) => {
       enable: !input.enable,
     }));
     axios
-      .patch(membersUrl + "/" + props.id, {
+      .patch("/users/" + props.id, {
         task: input.text,
       })
       .then(() => {
@@ -77,7 +86,7 @@ const EditForm = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog(membersUrl);
+    leaveLog("/users");
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -121,7 +130,7 @@ const EditDate = (props: { id: number }) => {
   });
 
   React.useEffect(() => {
-    axios.get(membersUrl, { params: { id: props.id } }).then((response) => {
+    axios.get("/users", { params: { id: props.id } }).then((response) => {
       setDate((state) => ({ ...state, date: response.data[0].absent }));
     });
   }, [props.id]);
@@ -130,7 +139,7 @@ const EditDate = (props: { id: number }) => {
     e.preventDefault();
     setDate((state) => ({ ...state, enable: !date.enable }));
     axios
-      .patch(membersUrl + "/" + props.id, {
+      .patch("/users/" + props.id, {
         absent: date.date,
       })
       .then(() => {
@@ -141,7 +150,7 @@ const EditDate = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog(membersUrl);
+    leaveLog("/users");
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -180,7 +189,7 @@ export const MemberList: React.FC = () => {
   const [members, setMembers] = React.useState<Member[]>([]);
 
   React.useEffect(() => {
-    axios.get(membersUrl).then((response) => {
+    axios.get("/users").then((response) => {
       setMembers(response.data);
     });
   }, []);
@@ -243,7 +252,7 @@ export const Loglist: React.FC = () => {
   const [logs, setLog] = React.useState<Log[]>([]);
 
   React.useEffect(() => {
-    axios.get(logUrl).then((response) => {
+    axios.get("/logs").then((response) => {
       setLog(response.data);
     });
   }, []);
