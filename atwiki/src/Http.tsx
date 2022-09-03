@@ -1,8 +1,8 @@
-import React from "react";
 import axios from "axios";
+import { format } from "date-fns";
+import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
 
 // モックサーバーのURL　db.json
 const membersUrl = "http://localhost:3100/members";
@@ -182,8 +182,8 @@ export const MemberList: React.FC = () => {
     return members.is_student === true;
   });
   return (
-    <div>
-      <table border={1}>
+    <div className="p-3">
+      <table className="table table-striped table-hover">
         <thead>
           <tr>
             <th>名前</th>
@@ -206,7 +206,7 @@ export const MemberList: React.FC = () => {
         </tbody>
       </table>
 
-      <table border={1}>
+      <table className="table table-striped">
         <thead>
           <tr>
             <th>名前</th>
@@ -242,7 +242,7 @@ export const Loglist: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="p-3">
       <h3>更新履歴</h3>
       <h4>
         {logs.map((log) => (

@@ -1,8 +1,9 @@
+import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 
-import { MemberList, Loglist } from "./Http";
+import { Loglist, MemberList } from "./Http";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
