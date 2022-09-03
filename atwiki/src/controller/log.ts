@@ -28,7 +28,7 @@ app.get("/log/:id", async (req, res) => {
 app.post("/log", async (req, res) => {
   const { date, url, title } = req.body;
 
-  const user = await prisma.log.create({
+  const log = await prisma.log.create({
     data: {
       date: date,
       url: url,
@@ -36,5 +36,5 @@ app.post("/log", async (req, res) => {
     },
   });
 
-  res.json({ user });
+  res.json({ log });
 });
