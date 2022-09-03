@@ -127,6 +127,9 @@ const EditDate = (props: { id: number }) => {
     date: "",
     enable: false,
   });
+
+  let selectDate = date.date ? new Date(date.date) : null;
+
   React.useEffect(() => {
     axios.get(membersUrl, { params: { id: props.id } }).then((response) => {
       setDate((state) => ({ ...state, date: response.data[0].absent }));
@@ -155,6 +158,7 @@ const EditDate = (props: { id: number }) => {
   };
   const handleChange = (date: Date) => {
     const stringDate = format(date, "yyyy/MM/dd");
+    selectDate = date;
     setDate((state) => ({ ...state, date: stringDate }));
   };
 
@@ -167,7 +171,7 @@ const EditDate = (props: { id: number }) => {
               <i className="calendar alternate outline icon"></i>
             </label>
             <div className="d-inline-block">
-              <DatePicker onChange={handleChange} />
+              <DatePicker selected={selectDate} onChange={handleChange} />
             </div>
             <button
               className="btn btn-outline-secondary mx-3"
