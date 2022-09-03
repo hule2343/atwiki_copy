@@ -63,3 +63,5 @@ app.patch("/users/:id/", async (req, res) => {
 
   res.json({ user });
 });
+
+app.listen(3001);
