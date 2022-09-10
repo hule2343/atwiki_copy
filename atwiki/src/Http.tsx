@@ -109,7 +109,7 @@ const EditForm = (props: { id: number }) => {
           <div>
             <span>{input.text}</span>
             <button
-              className="btn btn-outline-secondary ms-3"
+              className="btn btn-outline-primary ms-3"
               onClick={handleInput}
             >
               編集
@@ -174,7 +174,7 @@ const EditDate = (props: { id: number }) => {
               <DatePicker selected={selectDate} onChange={handleChange} />
             </div>
             <button
-              className="btn btn-outline-secondary ms-3"
+              className="btn btn-outline-primary ms-3"
               onClick={handleSubmit}
             >
               保存
@@ -184,7 +184,7 @@ const EditDate = (props: { id: number }) => {
           <div>
             {date.date != null ? <span>{date.date}</span> : <span></span>}
             <button
-              className="btn btn-outline-secondary ms-3"
+              className="btn btn-outline-primary ms-3"
               onClick={handleInput}
             >
               編集
@@ -209,8 +209,8 @@ export const MemberList: React.FC = () => {
   });
   return (
     <div className="p-4">
-      <table className="table table-striped table-hover table-bordered w-auto">
-        <thead>
+      <table className="table table-hover table-bordered align-middle w-auto">
+        <thead className="table-light">
           <tr>
             <th>名前</th>
             <th>欠席予定</th>
@@ -232,8 +232,8 @@ export const MemberList: React.FC = () => {
         </tbody>
       </table>
 
-      <table className="table table-striped table-bordered w-auto">
-        <thead>
+      <table className="table table-bordered align-middle w-auto">
+        <thead className="table-light">
           <tr>
             <th>名前</th>
             <th>連絡</th>
@@ -268,7 +268,7 @@ export const Loglist: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
       <div>
         {logs.map((log) => (
