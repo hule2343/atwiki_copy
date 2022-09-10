@@ -197,6 +197,7 @@ export const MemberList: React.FC = () => {
   const students = members.filter((members) => {
     return members.is_student === true;
   });
+
   return (
     <div>
       <table border={1}>
@@ -256,12 +257,14 @@ export const Loglist: React.FC = () => {
       setLog(response.data);
     });
   }, []);
+  console.log(logs);
 
+  const logss = Array.from(logs);
   return (
     <div>
       <h3>更新履歴</h3>
       <h4>
-        {logs.map((log) => (
+        {logss.map((log) => (
           <div>
             <li key={log.id}>{log.date}</li>
             <a href={log.url}>編集箇所</a>

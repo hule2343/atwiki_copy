@@ -1,16 +1,25 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import cors from "cors";
 
 const prisma = new PrismaClient();
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
 app.use(express.json());
 
 app.get("/users", async (req, res) => {
   const users = await prisma.user.findMany();
 
-  res.json({ users });
+  res.json(users);
 });
 
 app.get("/users/:id", async (req, res) => {
@@ -62,6 +71,38 @@ app.patch("/users/:id/", async (req, res) => {
   });
 
   res.json({ user });
+});
+
+app.get("/logs", async (req, res) => {
+  const logs = prisma.log.findMany();
+
+  res.json(logs);
+});
+
+app.get("/log/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const log = await prisma.log.findFirst({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  res.json(log);
+});
+
+app.post("/log", async (req, res) => {
+  const { date, url, title } = req.body;
+
+  const log = await prisma.log.create({
+    data: {
+      date: date,
+      url: url,
+      title: title,
+    },
+  });
+
+  res.json({ log });
 });
 
 app.listen(3001);
