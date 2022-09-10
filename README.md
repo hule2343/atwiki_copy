@@ -46,11 +46,14 @@ Kangi Programmer's wiki　の機能を移行する
 ## データベースをモックサーバーからMySQLに移行
 [参考ページ](https://numb86-tech.hatenablog.com/entry/2022/03/26/180052)
 1. MySQLをインストール
+
 2. 参考ページに従ってデータベースを用意する。データベースの名前はkangi_dbとする。
+
 3．.env　ファイルの　DATABASE_URLを書き換える。↓例
 ~~~.env
 DATABASE_URL="mysql://root:YOURPASSWORD@localhost:3306/kangi_db"
 ~~~
+
 4．モデルはschema.prismaに定義済みなので以下を実行
 ~~~
  yarn run prisma migrate dev --name init
@@ -60,8 +63,10 @@ DATABASE_URL="mysql://root:YOURPASSWORD@localhost:3306/kangi_db"
 ~~~
 yarn run prisma studio
 ~~~
- - プロジェクトを起動
+- プロジェクトを起動
+
 6．MySQLを起動
+
 7. プロジェクトディレクトリにて　
 ~~~
 yarn run start
@@ -71,5 +76,6 @@ yarn run start
 yarn run react-scripts start
 ~~~
 これでプロジェクトが起動する(はず)
+
 エラーなどがあったらコメントで補足をお願いします。
 
