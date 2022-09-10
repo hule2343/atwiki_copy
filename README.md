@@ -38,7 +38,38 @@ Kangi Programmer's wiki　の機能を移行する
 - src
   - index.tsx : このコードにReact Componentをexportして表示している
   - Http.tsx　: index.tsxにexportするComponentが書かれている
+  - createUserForm.tsx : user作成用フォームコンポーネント
   - controller : APIがモデルごとにファイルを分けて定義されている
 - prisma
   - schema.prisma : DBのモデル定義が書かれている
 - その他のファイルについてはcreate-react-appしてから変更は加えていない(はず)
+## データベースをモックサーバーからMySQLに移行
+[参考ページ](https://numb86-tech.hatenablog.com/entry/2022/03/26/180052)
+1. MySQLをインストール
+2. 参考ページに従ってデータベースを用意する。データベースの名前はkangi_dbとする。
+3．.env　ファイルの　DATABASE_URLを書き換える。↓例
+~~~.env
+DATABASE_URL="mysql://root:YOURPASSWORD@localhost:3306/kangi_db"
+~~~
+4．モデルはschema.prismaに定義済みなので以下を実行
+~~~
+ yarn run prisma migrate dev --name init
+~~~
+
+5. 以下をコマンドラインで実行して何かしらのデータを登録してみる
+~~~
+yarn run prisma studio
+~~~
+ - プロジェクトを起動
+6．MySQLを起動
+7. プロジェクトディレクトリにて　
+~~~
+yarn run start
+~~~
+8. コマンドラインをもう一つ開いて
+~~~
+yarn run react-scripts start
+~~~
+これでプロジェクトが起動する(はず)
+エラーなどがあったらコメントで補足をお願いします。
+
