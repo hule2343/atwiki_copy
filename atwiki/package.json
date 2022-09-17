@@ -10,13 +10,18 @@
     "@types/cors": "^2.8.12",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.11.43",
+    "@types/passport": "^1.0.11",
     "@types/react": "^18.0.15",
     "@types/react-datepicker": "^4.4.2",
     "@types/react-dom": "^18.0.6",
+    "argon2": "^0.29.1",
     "axios": "^0.27.2",
     "cors": "^2.8.5",
     "date-fns": "^2.29.1",
     "dayjs": "^1.11.5",
+    "express-session": "^1.17.3",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
     "promise-mysql": "^5.2.0",
     "react": "^18.2.0",
     "react-datepicker": "^4.8.0",
@@ -29,7 +34,7 @@
   },
   "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm ./src/controller/API.ts",
+    "start": "node --loader ts-node/esm ./src/routes/index.ts",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -54,6 +59,9 @@
     ]
   },
   "devDependencies": {
-    "prisma": "^4.2.1"
+    "@types/express-session": "^1.17.5",
+    "joi": "^17.6.0",
+    "prisma": "^4.2.1",
+    "react-router-dom": "^6.4.0"
   }
 }

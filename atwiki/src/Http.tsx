@@ -246,7 +246,7 @@ export const MemberList: React.FC = () => {
 const leaveLog = (url: string) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd");
-  axios.post("http://localhost:3100/log", { url: url, date: date });
+  axios.post("/logs/log", { url: url, date: date });
 };
 
 export const Loglist: React.FC = () => {
@@ -257,14 +257,12 @@ export const Loglist: React.FC = () => {
       setLog(response.data);
     });
   }, []);
-  console.log(logs);
 
-  const logss = Array.from(logs);
   return (
     <div>
       <h3>更新履歴</h3>
       <h4>
-        {logss.map((log) => (
+        {logs.map((log) => (
           <div>
             <li key={log.id}>{log.date}</li>
             <a href={log.url}>編集箇所</a>

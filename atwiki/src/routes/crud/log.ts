@@ -1,19 +1,17 @@
-import express from "express";
+import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const app = express();
+const logRouter = Router();
 
-app.use(express.json());
+logRouter.get("/", async (req, res) => {
+  const logs = await prisma.log.findMany();
 
-app.get("/logs", async (req, res) => {
-  const logs = prisma.log.findMany();
-
-  res.json({ logs });
+  res.json(logs);
 });
 
-app.get("/log/:id", async (req, res) => {
+logRouter.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   const log = await prisma.log.findFirst({
@@ -25,7 +23,7 @@ app.get("/log/:id", async (req, res) => {
   res.json(log);
 });
 
-app.post("/log", async (req, res) => {
+logRouter.post("/log", async (req, res) => {
   const { date, url, title } = req.body;
 
   const log = await prisma.log.create({
@@ -38,3 +36,5 @@ app.post("/log", async (req, res) => {
 
   res.json({ log });
 });
+
+export default logRouter;

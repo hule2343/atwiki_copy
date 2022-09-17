@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosBase from "axios";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
-const userURL = "http://localhost:3000/user";
-
+const axios = axiosBase.create({
+  baseURL: "http://localhost:3001",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 2000,
+  responseType: "json",
+});
 type UserForm = {
   name: string;
   email: string;
@@ -11,6 +18,8 @@ type UserForm = {
 };
 
 export const CreateUserForm = () => {
+  const history = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -21,7 +30,7 @@ export const CreateUserForm = () => {
 
   const onSubmit = (data: UserForm): void => {
     axios
-      .post(userURL, {
+      .post("/register", {
         name: data.name,
         email: data.email,
         phonenumber: data.phonenumber != null ? data.phonenumber : "未登録",
@@ -32,6 +41,7 @@ export const CreateUserForm = () => {
           console.log(error);
         }
       });
+    history("/");
   };
 
   const handleIs_student = (e: React.ChangeEvent<HTMLInputElement>) => {
