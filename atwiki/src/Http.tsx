@@ -226,6 +226,11 @@ export const MemberList: React.FC = () => {
     return members.is_student === true;
   });
 
+  const clickEvent = async (index: number) => {
+    const rsp = await axios.get(`/users/${index}`);
+    console.log(rsp.data);
+  };
+
   return (
     <div className="p-4">
       <table className="table table-hover table-bordered align-middle w-auto">
@@ -267,6 +272,8 @@ export const MemberList: React.FC = () => {
           ))}
         </tbody>
       </table>
+      <button onClick={() => clickEvent(1)}>Test 1</button>
+      <button onClick={() => clickEvent(2)}>Test 2</button>
     </div>
   );
 };
