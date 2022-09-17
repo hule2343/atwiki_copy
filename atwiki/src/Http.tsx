@@ -1,12 +1,21 @@
-import axios from "axios";
+import axiosBase from "axios";
 import { format } from "date-fns";
 import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 // モックサーバーのURL　db.json
-const membersUrl = "http://localhost:3100/members";
-const logUrl = "http://localhost:3100/log";
+//const "/users" = "http://localhost:3100/members";
+//const logUrl = "http://localhost:3100/log";
+
+const axios = axiosBase.create({
+  baseURL: "http://localhost:3001",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 2000,
+  responseType: "json",
+});
 // discordのWebhook URL (test server)
 const discordUrl =
   "https://discord.com/api/webhooks/1018031676632342538/dnLwhYYOt_U14Nj_3mmevObgBiJR3K9MIqNdsftTcO9R-BXjC1vPEUEVwH6v_uV4nWNF";
@@ -14,7 +23,7 @@ const discordUrl =
 type Member = {
   id: number;
   name: string;
-  address: string;
+  email: string;
   phonenumber: string;
   task: string;
   absent: string;
@@ -40,7 +49,7 @@ type DayForm = {
 };
 
 const EditForm = (props: { id: number }) => {
-  axios.get(membersUrl, { params: { id: props.id } });
+  axios.get("/users", { params: { id: props.id } });
   const [input, setInput] = React.useState<Form>({
     id: props.id,
     text: "",
@@ -48,7 +57,7 @@ const EditForm = (props: { id: number }) => {
   });
   React.useEffect(() => {
     axios
-      .get(membersUrl, { params: { id: props.id } })
+      .get("/users", { params: { id: props.id } })
       .then((response) => {
         setInput((state) => ({
           ...state,
@@ -60,6 +69,7 @@ const EditForm = (props: { id: number }) => {
         console.log(error);
       });
   }, [props.id]);
+
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     setInput((state) => ({
@@ -68,7 +78,7 @@ const EditForm = (props: { id: number }) => {
       enable: !input.enable,
     }));
     axios
-      .patch(membersUrl + "/" + props.id, {
+      .patch("/users/" + props.id, {
         task: input.text,
       })
       .then(() => {
@@ -79,8 +89,9 @@ const EditForm = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog(membersUrl);
+    leaveLog("/users");
   };
+
   const handleInput = (e: React.MouseEvent) => {
     e.preventDefault();
     setInput((state) => ({
@@ -134,15 +145,16 @@ const EditDate = (props: { id: number }) => {
   let selectDate = date.date ? new Date(date.date) : null;
 
   React.useEffect(() => {
-    axios.get(membersUrl, { params: { id: props.id } }).then((response) => {
+    axios.get("/users", { params: { id: props.id } }).then((response) => {
       setDate((state) => ({ ...state, date: response.data[0].absent }));
     });
   }, [props.id]);
+
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     setDate((state) => ({ ...state, enable: !date.enable }));
     axios
-      .patch(membersUrl + "/" + props.id, {
+      .patch("/users/" + props.id, {
         absent: date.date,
       })
       .then(() => {
@@ -153,12 +165,14 @@ const EditDate = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog(membersUrl);
+    leaveLog("/users");
   };
+
   const handleInput = (e: React.MouseEvent) => {
     e.preventDefault();
     setDate((state) => ({ ...state, enable: !date.enable }));
   };
+
   const handleChange = (date: Date) => {
     const stringDate = format(date, "yyyy/MM/dd");
     selectDate = date;
@@ -201,8 +215,9 @@ const EditDate = (props: { id: number }) => {
 
 export const MemberList: React.FC = () => {
   const [members, setMembers] = React.useState<Member[]>([]);
+
   React.useEffect(() => {
-    axios.get(membersUrl).then((response) => {
+    axios.get("/users").then((response) => {
       setMembers(response.data);
     });
   }, []);
@@ -210,6 +225,7 @@ export const MemberList: React.FC = () => {
   const students = members.filter((members) => {
     return members.is_student === true;
   });
+
   return (
     <div className="p-4">
       <table className="table table-hover table-bordered align-middle w-auto">
@@ -246,7 +262,7 @@ export const MemberList: React.FC = () => {
           {members.map((member) => (
             <tr key={member.id}>
               <td>{member.name}</td>
-              <td>{member.address}</td>
+              <td>{member.email}</td>
             </tr>
           ))}
         </tbody>
@@ -266,16 +282,18 @@ export const Loglist: React.FC = () => {
   const [logs, setLog] = React.useState<Log[]>([]);
 
   React.useEffect(() => {
-    axios.get(logUrl).then((response) => {
+    axios.get("/logs").then((response) => {
       setLog(response.data);
     });
   }, []);
+  console.log(logs);
 
+  const logss = Array.from(logs);
   return (
     <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
-      <div>
-        {logs.map((log) => (
+      <h4>
+        {logss.map((log) => (
           <div>
             <li key={log.id}>{log.date}</li>
             <a className="ms-4" href={log.url}>
@@ -283,7 +301,9 @@ export const Loglist: React.FC = () => {
             </a>
           </div>
         ))}
-      </div>
+      </h4>
     </div>
   );
 };
+
+export const createUser = () => {};
