@@ -7,6 +7,9 @@ import "react-datepicker/dist/react-datepicker.css";
 // モックサーバーのURL　db.json
 const membersUrl = "http://localhost:3100/members";
 const logUrl = "http://localhost:3100/log";
+// discordのWebhook URL (test server)
+const discordUrl =
+  "https://discord.com/api/webhooks/1018031676632342538/dnLwhYYOt_U14Nj_3mmevObgBiJR3K9MIqNdsftTcO9R-BXjC1vPEUEVwH6v_uV4nWNF";
 
 type Member = {
   id: number;
@@ -256,6 +259,7 @@ const leaveLog = (url: string) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd");
   axios.post("http://localhost:3100/log", { url: url, date: date });
+  axios.post(discordUrl, { content: `url: ${url}\rdate: ${date} ` });
 };
 
 export const Loglist: React.FC = () => {
