@@ -1,6 +1,6 @@
-import express from "express";
 import { PrismaClient } from "@prisma/client";
 import cors from "cors";
+import express from "express";
 
 const prisma = new PrismaClient();
 
@@ -74,7 +74,7 @@ app.patch("/users/:id/", async (req, res) => {
 });
 
 app.get("/logs", async (req, res) => {
-  const logs = prisma.log.findMany();
+  const logs = await prisma.log.findMany();
 
   res.json(logs);
 });

@@ -57,11 +57,11 @@ const EditForm = (props: { id: number }) => {
   });
   React.useEffect(() => {
     axios
-      .get("/users", { params: { id: props.id } })
+      .get(`/users/${props.id}`)
       .then((response) => {
         setInput((state) => ({
           ...state,
-          text: response.data[0].task,
+          text: response.data.task,
         }));
         console.log(response.data);
       })
@@ -89,7 +89,7 @@ const EditForm = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog("/users");
+    leaveLog(props.id, "/users");
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -145,8 +145,8 @@ const EditDate = (props: { id: number }) => {
   let selectDate = date.date ? new Date(date.date) : null;
 
   React.useEffect(() => {
-    axios.get("/users", { params: { id: props.id } }).then((response) => {
-      setDate((state) => ({ ...state, date: response.data[0].absent }));
+    axios.get(`/users/${props.id}`).then((response) => {
+      setDate((state) => ({ ...state, date: response.data.absent }));
     });
   }, [props.id]);
 
@@ -165,7 +165,7 @@ const EditDate = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog("/users");
+    leaveLog(props.id, "/users");
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -226,11 +226,6 @@ export const MemberList: React.FC = () => {
     return members.is_student === true;
   });
 
-  const clickEvent = async (index: number) => {
-    const rsp = await axios.get(`/users/${index}`);
-    console.log(rsp.data);
-  };
-
   return (
     <div className="p-4">
       <table className="table table-hover table-bordered align-middle w-auto">
@@ -272,17 +267,25 @@ export const MemberList: React.FC = () => {
           ))}
         </tbody>
       </table>
-      <button onClick={() => clickEvent(1)}>Test 1</button>
-      <button onClick={() => clickEvent(2)}>Test 2</button>
     </div>
   );
 };
 
-const leaveLog = (url: string) => {
+const leaveLog = (id: number, url: string) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd");
-  axios.post("http://localhost:3100/log", { url: url, date: date });
-  axios.post(discordUrl, { content: `url: ${url}\rdate: ${date} ` });
+  axios
+    .post("http://localhost:3001/log", {
+      date: date,
+      url: url,
+      title: date + ", " + id,
+    })
+    .then((response) => {
+      axios.post(discordUrl, { content: JSON.stringify(response.data.log) });
+    })
+    .catch((error: Error) => {
+      console.log(error.message);
+    });
 };
 
 export const Loglist: React.FC = () => {
