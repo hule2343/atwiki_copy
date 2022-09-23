@@ -155,7 +155,7 @@ const EditDate = (props: { id: number }) => {
     setDate((state) => ({ ...state, enable: !date.enable }));
     axios
       .patch("/users/" + props.id, {
-        absent: date.date,
+        date: date.date,
       })
       .then(() => {
         setDate((state) => ({ ...state, date: date.date }));
@@ -302,7 +302,7 @@ export const Loglist: React.FC = () => {
   return (
     <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
-      <h4>
+      <div>
         {logss.map((log) => (
           <div>
             <li key={log.id}>{log.date}</li>
@@ -311,7 +311,7 @@ export const Loglist: React.FC = () => {
             </a>
           </div>
         ))}
-      </h4>
+      </div>
     </div>
   );
 };
