@@ -20,6 +20,8 @@ const axios = axiosBase.create({
 const discordUrl =
   "https://discord.com/api/webhooks/1018031676632342538/dnLwhYYOt_U14Nj_3mmevObgBiJR3K9MIqNdsftTcO9R-BXjC1vPEUEVwH6v_uV4nWNF";
 
+let logId = 0;
+
 type Member = {
   id: number;
   name: string;
@@ -103,7 +105,7 @@ const EditForm = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog(logData.name, "task", logData.previousData, input.text, "/users");
+    leaveLog(logData.name, "task", logData.previousData, input.text);
     setLogData((state) => ({ ...state, previousData: input.text }));
   };
 
@@ -192,8 +194,7 @@ const EditDate = (props: { id: number }) => {
       logData.name,
       "abscent date",
       logData.previousData,
-      date.date ? date.date : "none",
-      "/users"
+      date.date ? date.date : "none"
     );
     setLogData((state) => ({
       ...state,
@@ -308,20 +309,23 @@ const leaveLog = (
   userName: string,
   type: string,
   previousData: string,
-  changedData: string,
-  url: string
+  changedData: string
 ) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd");
+  const url = `http://localhost:3001/log/${logId + 1}`;
   axios
-    .post("http://localhost:3001/log", {
+    .post("/log", {
       date: date,
       url: url,
       title: `${userName}'s ${type} is changed from ${previousData} to ${changedData}`,
     })
     .then((response) => {
       axios.post(discordUrl, {
-        content: JSON.stringify(response.data.log.title).slice(1, -1),
+        content: `${JSON.stringify(response.data.log.title).slice(
+          1,
+          -1
+        )}\n${url}`,
       });
     })
     .catch((error: Error) => {
@@ -340,6 +344,7 @@ export const Loglist: React.FC = () => {
   console.log(logs);
 
   const logss = Array.from(logs);
+  logId = logss.length;
   return (
     <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
