@@ -104,6 +104,7 @@ const EditForm = (props: { id: number }) => {
         }
       });
     leaveLog(logData.name, "task", logData.previousData, input.text, "/users");
+    setLogData((state) => ({ ...state, previousData: input.text }));
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -157,7 +158,7 @@ const EditDate = (props: { id: number }) => {
   });
   const [logData, setLogData] = React.useState<PreviousLogData>({
     name: "",
-    previousData: "",
+    previousData: "none",
   });
 
   let selectDate = date.date ? new Date(date.date) : null;
@@ -194,6 +195,10 @@ const EditDate = (props: { id: number }) => {
       date.date ? date.date : "none",
       "/users"
     );
+    setLogData((state) => ({
+      ...state,
+      previousData: date.date ? date.date : "none",
+    }));
   };
 
   const handleInput = (e: React.MouseEvent) => {
