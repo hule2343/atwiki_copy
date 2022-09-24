@@ -36,6 +36,11 @@ type Log = {
   date: string;
 };
 
+type PreviousLogData = {
+  name: string;
+  previousData: string;
+};
+
 type Form = {
   id: number;
   text: string;
@@ -55,6 +60,11 @@ const EditForm = (props: { id: number }) => {
     text: "",
     enable: false,
   });
+  const [logData, setLogData] = React.useState<PreviousLogData>({
+    name: "",
+    previousData: "",
+  });
+
   React.useEffect(() => {
     axios
       .get(`/users/${props.id}`)
@@ -64,6 +74,10 @@ const EditForm = (props: { id: number }) => {
           text: response.data.task,
         }));
         console.log(response.data);
+        setLogData({
+          name: response.data.name,
+          previousData: response.data.task,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -89,7 +103,7 @@ const EditForm = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog(props.id, "/users");
+    leaveLog(logData.name, "task", logData.previousData, input.text, "/users");
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -141,12 +155,20 @@ const EditDate = (props: { id: number }) => {
     date: "",
     enable: false,
   });
+  const [logData, setLogData] = React.useState<PreviousLogData>({
+    name: "",
+    previousData: "",
+  });
 
   let selectDate = date.date ? new Date(date.date) : null;
 
   React.useEffect(() => {
     axios.get(`/users/${props.id}`).then((response) => {
       setDate((state) => ({ ...state, date: response.data.absent }));
+      setLogData({
+        name: response.data.name,
+        previousData: response.data.absent,
+      });
     });
   }, [props.id]);
 
@@ -165,7 +187,13 @@ const EditDate = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog(props.id, "/users");
+    leaveLog(
+      logData.name,
+      "abscent date",
+      logData.previousData,
+      date.date ? date.date : "none",
+      "/users"
+    );
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -271,17 +299,25 @@ export const MemberList: React.FC = () => {
   );
 };
 
-const leaveLog = (id: number, url: string) => {
+const leaveLog = (
+  userName: string,
+  type: string,
+  previousData: string,
+  changedData: string,
+  url: string
+) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd");
   axios
     .post("http://localhost:3001/log", {
       date: date,
       url: url,
-      title: date + ", " + id,
+      title: `${userName}'s ${type} is changed from ${previousData} to ${changedData}`,
     })
     .then((response) => {
-      axios.post(discordUrl, { content: JSON.stringify(response.data.log) });
+      axios.post(discordUrl, {
+        content: JSON.stringify(response.data.log.title).slice(1, -1),
+      });
     })
     .catch((error: Error) => {
       console.log(error.message);
