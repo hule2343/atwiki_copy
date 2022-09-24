@@ -105,7 +105,7 @@ const EditForm = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog(logData.name, "task", logData.previousData, input.text);
+    leaveLog(logData.name, "進捗状況", logData.previousData, input.text);
     setLogData((state) => ({ ...state, previousData: input.text }));
   };
 
@@ -192,7 +192,7 @@ const EditDate = (props: { id: number }) => {
       });
     leaveLog(
       logData.name,
-      "abscent date",
+      "欠席予定日",
       logData.previousData,
       date.date ? date.date : "none"
     );
@@ -318,7 +318,7 @@ const leaveLog = (
     .post("/log", {
       date: date,
       url: url,
-      title: `${userName}'s ${type} is changed from ${previousData} to ${changedData}`,
+      title: `${userName}の${type}が${previousData}から${changedData}に変更`,
     })
     .then((response) => {
       axios.post(discordUrl, {
