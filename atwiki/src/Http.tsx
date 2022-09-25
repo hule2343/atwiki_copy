@@ -8,7 +8,7 @@ import { format } from "date-fns";
 //const "/users" = "http://localhost:3100/members";
 //const logUrl = "http://localhost:3100/log";
 
-const axios = axiosBase.create({
+export const axios = axiosBase.create({
   baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",

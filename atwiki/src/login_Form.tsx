@@ -1,16 +1,8 @@
 import React, { useState } from "react";
-import axiosBase from "axios";
+import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-const axios = axiosBase.create({
-  baseURL: "http://localhost:3001",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 2000,
-  responseType: "json",
-});
 type loginForm = {
   username: string;
   password: string;

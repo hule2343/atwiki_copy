@@ -1,16 +1,8 @@
 import React, { useState } from "react";
-import axiosBase from "axios";
+import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-const axios = axiosBase.create({
-  baseURL: "http://localhost:3001",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 2000,
-  responseType: "json",
-});
 type UserForm = {
   name: string;
   email: string;
@@ -69,12 +61,12 @@ export const CreateUserForm = () => {
           <input id="phonenumber" {...register("phonenumber")} />
         </div>
         <div>
-          <label>学生</label>
-          <input type="checkbox" onChange={handleIs_student} />
-        </div>
-        <div>
           <label htmlFor="password">パスワード</label>
           <input id="password" {...register("password", { required: true })} />
+        </div>
+        <div>
+          <label>学生</label>
+          <input type="checkbox" onChange={handleIs_student} />
         </div>
         <button type="submit"></button>
       </form>
