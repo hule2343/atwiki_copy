@@ -22,6 +22,9 @@ export const LoginForm = () => {
         name: data.username,
         password: data.password,
       })
+      .then((res) => {
+        console.log(res);
+      })
       .catch((error) => {
         if (error.response) {
           console.log(error);
