@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }), express.json());
 app.use(
   session({
     name: "session",
-    secret: process.env.SECRET!,
+    secret: "kantendo",
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 1, sameSite: "lax" }, // 1 day expiration
