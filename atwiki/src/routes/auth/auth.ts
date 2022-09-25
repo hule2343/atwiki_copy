@@ -11,8 +11,8 @@ const authRouter = Router();
 authRouter.post(
   "/login",
   passport.authenticate("local", {
-    failureRedirect: "/login",
-    successRedirect: "",
+    failureFlash: true,
+    successFlash: true,
   })
 );
 
@@ -41,7 +41,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
       },
     })
     .then((_user) => {
-      res.redirect("/login");
+      res.redirect("/");
     })
     .catch(() => res.status(400).json("Unable to add user"));
 });

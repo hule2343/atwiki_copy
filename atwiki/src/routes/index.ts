@@ -5,7 +5,7 @@ import authRouter from "./auth/auth.js";
 import { PrismaClient } from "@prisma/client";
 import session from "express-session";
 import cors from "cors";
-import passport from "passport";
+import passport from "./auth/passport.js";
 
 const app = express();
 

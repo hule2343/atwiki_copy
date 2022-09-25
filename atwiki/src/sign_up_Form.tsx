@@ -15,6 +15,8 @@ type UserForm = {
   name: string;
   email: string;
   phonenumber: string;
+  password: string;
+  is_student: boolean;
 };
 
 export const CreateUserForm = () => {
@@ -34,6 +36,7 @@ export const CreateUserForm = () => {
         name: data.name,
         email: data.email,
         phonenumber: data.phonenumber != null ? data.phonenumber : "未登録",
+        password: data.password,
         is_student: is_student,
       })
       .catch((error) => {
@@ -68,6 +71,10 @@ export const CreateUserForm = () => {
         <div>
           <label>学生</label>
           <input type="checkbox" onChange={handleIs_student} />
+        </div>
+        <div>
+          <label htmlFor="password">パスワード</label>
+          <input id="password" {...register("password", { required: true })} />
         </div>
         <button type="submit"></button>
       </form>
