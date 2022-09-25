@@ -22,6 +22,7 @@ module.exports = (app: any) => {
 };
 
 passport.serializeUser((user: Express.User, done: any) => {
+  console.log("serialized", user);
   done(null, (user as User).id);
 });
 
@@ -36,13 +37,18 @@ passport.use(
         where: { name: username },
       });
 
+      console.log(user);
+
       const response = "invalid login credentials";
 
       if (!user) return done(response);
       else if (user) {
         const passMatch = await argon2id.verify(user.password, password);
 
-        if (passMatch) return done(null, user);
+        if (passMatch) {
+          console.log("pass Matched", user);
+          return done(null, user);
+        }
 
         return done(response);
       }
