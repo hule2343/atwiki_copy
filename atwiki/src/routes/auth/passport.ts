@@ -28,10 +28,12 @@ passport.use(
       usernameField: "username",
       passwordField: "password",
     },
+
     async (username: string, password: string, done: any) => {
       const user = await prisma.user.findUnique({
         where: { name: username },
       });
+      console.log("LocalStrategy");
 
       console.log(user);
 
