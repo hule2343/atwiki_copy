@@ -60,7 +60,6 @@ const EditForm = (props: { id: number }) => {
           ...state,
           text: response.data[0].task,
         }));
-        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);

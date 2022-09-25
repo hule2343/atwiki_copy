@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import argon2id from "argon2";
 import { NextFunction, Request, Response } from "express";
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
 
 type User = {
   id: number;
@@ -15,14 +17,11 @@ type User = {
 
 const prisma = new PrismaClient();
 
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-
 module.exports = (app: any) => {
   app.use(passport.session());
 };
 
-passport.serializeUser((user: User, done: any) => {
+passport.serializeUser((user: Express.User, done: any) => {
   done(null, (user as User).id);
 });
 
