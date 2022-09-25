@@ -17,10 +17,6 @@ type User = {
 
 const prisma = new PrismaClient();
 
-module.exports = (app: any) => {
-  app.use(passport.session());
-};
-
 passport.serializeUser((user: Express.User, done: any) => {
   console.log("serialized", user);
   done(null, (user as User).id);
@@ -74,3 +70,5 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
 
   res.status(401).redirect("/login");
 };
+
+export default passport;

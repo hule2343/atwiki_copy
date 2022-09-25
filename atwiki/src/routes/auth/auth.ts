@@ -1,6 +1,6 @@
 import argon2id from "argon2";
 import { Router, Request, Response } from "express";
-import passport from "passport";
+import passport from "./passport.js";
 import { PrismaClient } from "@prisma/client";
 import { isLoggedIn } from "./passport";
 import joi from "joi";
