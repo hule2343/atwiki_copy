@@ -70,7 +70,7 @@ passport.deserializeUser(async function (id: number, done: any) {
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   if (req.isAuthenticated()) return next();
 
-  res.status(401).redirect("/login");
+  res.status(401);
 };
 
 export default passport;

@@ -3,6 +3,7 @@ import axiosBase from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
+import { LoginForm } from "./login_Form";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -273,14 +274,29 @@ export const Loglist: React.FC = () => {
 };
 
 export const Home: React.FC = () => {
+  const [is_login, setLogin] = React.useState(false);
+  React.useEffect(() => {
+    axios.get("/is_login").then((response) => {
+      console.log(response.data.is_login);
+      setLogin(response.data.is_login);
+    });
+  });
   return (
     <div>
-      <div>
-        <MemberList />
-      </div>
-      <div>
-        <Loglist />
-      </div>
+      {is_login ? (
+        <div>
+          <LoginForm />
+        </div>
+      ) : (
+        <div>
+          <div>
+            <MemberList />
+          </div>
+          <div>
+            <Loglist />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

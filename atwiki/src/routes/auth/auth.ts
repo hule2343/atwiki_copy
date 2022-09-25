@@ -14,7 +14,6 @@ authRouter.post(
   passport.authenticate("local", {
     failureRedirect: "/login/fail",
     successRedirect: ClientURL,
-    failureFlash: true,
   })
 );
 
@@ -50,6 +49,10 @@ authRouter.post("/register", async (req: Request, res: Response) => {
       res.redirect(ClientURL);
     })
     .catch(() => res.status(400).json("Unable to add user"));
+});
+
+authRouter.get("is_login", isLoggedIn, (req, res) => {
+  res.json({ is_login: true });
 });
 
 const registerSchema = joi.object().keys({
