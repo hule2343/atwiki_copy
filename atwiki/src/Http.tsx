@@ -273,4 +273,17 @@ export const Loglist: React.FC = () => {
   );
 };
 
+export const Home: React.FC = () => {
+  return (
+    <div>
+      <div>
+        <MemberList />
+      </div>
+      <div>
+        <Loglist />
+      </div>
+    </div>
+  );
+};
+
 export const createUser = () => {};
