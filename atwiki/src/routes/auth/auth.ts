@@ -1,21 +1,17 @@
 import argon2id from "argon2";
 import { Router, Request, Response } from "express";
-import passport from "./passport.js";
+import passport, { isLoggedIn } from "./passport.js";
 import { PrismaClient } from "@prisma/client";
-import { isLoggedIn } from "./passport";
 import joi from "joi";
 
 const prisma = new PrismaClient();
 const authRouter = Router();
 const ClientURL = "http://localhost:3000";
 
-authRouter.post(
-  "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/login/fail",
-    successRedirect: ClientURL,
-  })
-);
+authRouter.post("/login", passport.authenticate("local"), (req, res) => {
+  console.log(req);
+  res.json(req.user);
+});
 
 authRouter.get("/login/fail", (req: Request, res: Response) => {
   res.status(401).json({ message: "login was failured" });
@@ -51,7 +47,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     .catch(() => res.status(400).json("Unable to add user"));
 });
 
-authRouter.get("is_login", isLoggedIn, (req, res) => {
+authRouter.get("/is_login", isLoggedIn, (req, res) => {
   res.json({ is_login: true });
 });
 

@@ -19,7 +19,7 @@ export const LoginForm = () => {
   const onSubmit = (data: loginForm): void => {
     axios
       .post("/login", {
-        name: data.username,
+        username: data.username,
         password: data.password,
       })
       .then((res) => {
