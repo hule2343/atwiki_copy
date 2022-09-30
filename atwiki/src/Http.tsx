@@ -274,29 +274,14 @@ export const Loglist: React.FC = () => {
 };
 
 export const Home: React.FC = () => {
-  const [is_login, setLogin] = React.useState(false);
-  React.useEffect(() => {
-    axios.get("/is_login").then((response) => {
-      console.log(response.data.is_login);
-      setLogin(response.data.is_login);
-    });
-  });
   return (
     <div>
-      {is_login ? (
-        <div>
-          <LoginForm />
-        </div>
-      ) : (
-        <div>
-          <div>
-            <MemberList />
-          </div>
-          <div>
-            <Loglist />
-          </div>
-        </div>
-      )}
+      <div>
+        <MemberList />
+      </div>
+      <div>
+        <Loglist />
+      </div>
     </div>
   );
 };
