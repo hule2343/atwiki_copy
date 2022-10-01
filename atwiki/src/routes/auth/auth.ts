@@ -9,6 +9,7 @@ const authRouter = Router();
 const ClientURL = "http://localhost:3000";
 
 authRouter.post("/login", passport.authenticate("local"), (req, res) => {
+  console.log("Login succeed");
   res.json(req.user);
 });
 

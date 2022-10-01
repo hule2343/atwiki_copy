@@ -57,7 +57,7 @@ passport.use(
 
 passport.deserializeUser(async function (id: number, done: any) {
   try {
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.findUnique({
       where: {
         id: Number(id),
       },
@@ -69,6 +69,8 @@ passport.deserializeUser(async function (id: number, done: any) {
 });
 
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+  console.log("authenticate", req.user);
+  console.log("isAuthenticate", req.isAuthenticated());
   if (req.isAuthenticated()) return next();
 
   res.status(401);

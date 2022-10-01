@@ -6,33 +6,36 @@ import { Home } from "./Http";
 import { LoginForm } from "./login_Form";
 import { CreateUserForm } from "./sign_up_Form";
 import { LoginRequire } from "./loginRequire";
-
+import { LoginManager } from "./LoginContext";
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
   <React.StrictMode>
     <div>
       <div>
         <div>
-          <BrowserRouter>
-            <ul>
-              <li>
-                <NavLink to="/login">Login</NavLink>
-              </li>
-              <li>
-                <NavLink to="/register">Sign up</NavLink>
-              </li>
-              <li>
-                <NavLink to="/">kangi</NavLink>
-              </li>
-            </ul>
-            <Routes>
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/register" element={<CreateUserForm />} />
-              <LoginRequire>
-                <Route path="/" element={<Home />} />
-              </LoginRequire>
-            </Routes>
-          </BrowserRouter>
+          <LoginManager>
+            <BrowserRouter>
+              <ul>
+                <li>
+                  <NavLink to="/login">Login</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/register">Sign up</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/">kangi</NavLink>
+                </li>
+              </ul>
+              <Routes>
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<CreateUserForm />} />
+                <Route
+                  path="/"
+                  element={<LoginRequire component={<Home />} />}
+                />
+              </Routes>
+            </BrowserRouter>
+          </LoginManager>
         </div>
       </div>
     </div>

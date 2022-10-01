@@ -18,19 +18,22 @@ export const LoginForm = () => {
 
   const onSubmit = (data: loginForm): void => {
     axios
-      .post("/login", {
-        username: data.username,
-        password: data.password,
-      })
+      .post(
+        "/login",
+        {
+          username: data.username,
+          password: data.password,
+        },
+        { withCredentials: true }
+      )
       .then((res) => {
-        console.log(res);
+        navigate("/");
       })
       .catch((error) => {
         if (error.response) {
           console.log(error);
         }
       });
-    navigate("/");
   };
 
   return (

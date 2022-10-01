@@ -2,18 +2,22 @@ import React, { useEffect, useState } from "react";
 import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { Navigate } from "react-router-dom";
-
+import { LoginContext } from "./LoginContext";
 type LoginRequiredType = {
-  children: React.ReactNode;
+  component: React.ReactNode;
 };
 
 export const LoginRequire: React.FC<LoginRequiredType> = (props) => {
-  const [is_login, setLogin] = useState(false);
+  const { is_login, setLogin } = React.useContext(LoginContext);
 
   React.useEffect(() => {
-    axios.get("/is_login").then((response) => {
-      setLogin(response.data.is_login);
+    axios.get("/is_login", { withCredentials: true }).then((response) => {
+      if (response.data.is_login) {
+        setLogin(true);
+        console.log("useeffect", is_login);
+      }
     });
   });
-  return is_login ? <>{props.children}</> : <Navigate to={"/login"} />;
+  console.log("is_login", is_login);
+  return is_login ? <>{props.component}</> : <Navigate to={"/login"} />;
 };
