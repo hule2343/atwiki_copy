@@ -8,7 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 //const "/users" = "http://localhost:3100/members";
 //const logUrl = "http://localhost:3100/log";
 
-const axios = axiosBase.create({
+export const axios = axiosBase.create({
   baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
@@ -69,11 +69,11 @@ const EditForm = (props: { id: number }) => {
 
   React.useEffect(() => {
     axios
-      .get(`/users/${props.id}`)
+      .get("/users", { params: { id: props.id } })
       .then((response) => {
         setInput((state) => ({
           ...state,
-          text: response.data.task,
+          text: response.data[0].task,
         }));
         console.log(response.data);
         setLogData({
@@ -313,9 +313,9 @@ const leaveLog = (
 ) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd");
-  const url = `http://localhost:3001/log/${logId + 1}`;
+  const url = `http://localhost:3001/logs/${logId + 1}`;
   axios
-    .post("/log", {
+    .post("/logs/log", {
       date: date,
       url: url,
       title: `${userName}の${type}が${previousData}から${changedData}に変更`,
@@ -339,17 +339,15 @@ export const Loglist: React.FC = () => {
   React.useEffect(() => {
     axios.get("/logs").then((response) => {
       setLog(response.data);
+      logId = response.data.length;
     });
   }, []);
-  console.log(logs);
 
-  const logss = Array.from(logs);
-  logId = logss.length;
   return (
     <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
       <div>
-        {logss.map((log) => (
+        {logs.map((log) => (
           <div>
             <li key={log.id}>{log.date}</li>
             <a className="ms-4" href={log.url}>
@@ -357,6 +355,19 @@ export const Loglist: React.FC = () => {
             </a>
           </div>
         ))}
+      </div>
+    </div>
+  );
+};
+
+export const Home: React.FC = () => {
+  return (
+    <div>
+      <div>
+        <MemberList />
+      </div>
+      <div>
+        <Loglist />
       </div>
     </div>
   );
