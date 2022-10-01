@@ -1,6 +1,4 @@
-import { type } from "@testing-library/user-event/dist/type";
 import React, { useState } from "react";
-import ReactDOM from "react-dom/client";
 
 type LoginContextType = {
   is_login: boolean;
