@@ -17,12 +17,13 @@ authRouter.get("/login/fail", (req: Request, res: Response) => {
   res.status(401).json({ message: "login was failured" });
 });
 
-authRouter.get("/logout", (req: Request, res: Response) => {
+authRouter.post("/logout", (req: Request, res: Response) => {
   req.logout((err) => {
     if (err) {
       res.status(401);
     }
   });
+  res.redirect("/is_login");
 });
 
 authRouter.post("/register", async (req: Request, res: Response) => {

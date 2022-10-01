@@ -4,6 +4,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { LoginForm } from "./login_Form";
+import { useNavigate } from "react-router";
+import { response } from "express";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -274,8 +276,16 @@ export const Loglist: React.FC = () => {
 };
 
 export const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    axios.post("/logout", { withCredentials: true }).then((response) => {});
+    navigate("/login");
+  };
+
   return (
     <div>
+      <button onClick={handleLogout}>ログアウト</button>
       <div>
         <MemberList />
       </div>
