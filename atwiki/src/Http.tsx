@@ -17,7 +17,7 @@ export const axios = axiosBase.create({
   responseType: "json",
 });
 // discordのWebhook URL (test server)
-const discordUrl =
+export const discordUrl =
   "https://discord.com/api/webhooks/1018031676632342538/dnLwhYYOt_U14Nj_3mmevObgBiJR3K9MIqNdsftTcO9R-BXjC1vPEUEVwH6v_uV4nWNF";
 
 let logId = 0;

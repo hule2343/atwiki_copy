@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { axios, discordUrl } from "./Http";
 
 type UserForm = {
   name: string;
@@ -30,6 +30,11 @@ export const CreateUserForm = () => {
         phonenumber: data.phonenumber != null ? data.phonenumber : "未登録",
         password: data.password,
         is_student: is_student,
+      })
+      .then(() => {
+        axios.post(discordUrl, {
+          content: `${data.name}さんがatwikiに登録されました`,
+        });
       })
       .catch((error) => {
         if (error.response) {
