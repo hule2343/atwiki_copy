@@ -1,6 +1,7 @@
 import axiosBase from "axios";
 import { format } from "date-fns";
 import React from "react";
+import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -36,6 +37,7 @@ type Log = {
   id: number;
   url: string;
   date: string;
+  title: string;
 };
 
 type PreviousLogData = {
@@ -355,6 +357,7 @@ export const Loglist: React.FC = () => {
 
   React.useEffect(() => {
     axios.get("/logs").then((response) => {
+      console.log(response.data);
       setLog(response.data);
       logId = response.data.length;
     });
@@ -363,16 +366,16 @@ export const Loglist: React.FC = () => {
   return (
     <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
-      <ul className="list-unstyled">
-        {logs.map((log) => (
-          <li key={log.id}>
-            {log.date}
-            <a className="ms-4" href={log.url}>
-              編集箇所
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div className="w-50">
+        <Accordion>
+          {logs.map((log) => (
+            <Accordion.Item eventKey={log.id.toString()}>
+              <Accordion.Header>{log.date}</Accordion.Header>
+              <Accordion.Body>{log.title}</Accordion.Body>
+            </Accordion.Item>
+          ))}
+        </Accordion>
+      </div>
     </div>
   );
 };
