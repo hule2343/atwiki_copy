@@ -333,18 +333,16 @@ const leaveLog = (
   let now = new Date();
   let date = format(now, "yyyy/MM/dd");
   const url = `http://localhost:3001/logs/${logId + 1}`;
+  const title = `${userName}の${type}が${previousData}から${changedData}に変更`;
   axios
     .post("/logs/log", {
       date: date,
       url: url,
-      title: `${userName}の${type}が${previousData}から${changedData}に変更`,
+      title: title,
     })
     .then((response) => {
       axios.post(discordUrl, {
-        content: `${JSON.stringify(response.data.log.title).slice(
-          1,
-          -1
-        )}\n${url}`,
+        content: `${title}\n${url}`,
       });
     })
     .catch((error: Error) => {
