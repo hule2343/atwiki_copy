@@ -47,8 +47,9 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     .catch(() => res.status(400).json("Unable to add user"));
 });
 
-authRouter.get("/is_login", isLoggedIn, (req, res) => {
-  res.json({ is_login: true });
+authRouter.get("/is_login", (req, res) => {
+  console.log("/logout", req.isAuthenticated());
+  res.json({ is_login: req.isAuthenticated() });
 });
 
 const registerSchema = joi.object().keys({

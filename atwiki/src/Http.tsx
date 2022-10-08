@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { LoginForm } from "./login_Form";
 import { useNavigate } from "react-router";
 import { response } from "express";
+import { LoginContext } from "./LoginContext";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -20,7 +21,7 @@ export const axios = axiosBase.create({
   responseType: "json",
 });
 
-type Member = {
+export type User = {
   id: number;
   name: string;
   email: string;
@@ -188,7 +189,7 @@ const EditDate = (props: { id: number }) => {
 };
 
 export const MemberList: React.FC = () => {
-  const [members, setMembers] = React.useState<Member[]>([]);
+  const [members, setMembers] = React.useState<User[]>([]);
 
   React.useEffect(() => {
     axios.get("/users").then((response) => {
@@ -276,10 +277,22 @@ export const Loglist: React.FC = () => {
 };
 
 export const Home: React.FC = () => {
+  const { is_login, setLogin } = React.useContext(LoginContext);
   const navigate = useNavigate();
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
-    axios.post("/logout", { withCredentials: true }).then((response) => {});
+    axios
+      .post("/logout", { withCredentials: true })
+      .then((response) => {
+        setLogin(response.data.is_login);
+        console.log("logout response data", response.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log("logout failed");
+          console.log(error);
+        }
+      });
     navigate("/login");
   };
 
