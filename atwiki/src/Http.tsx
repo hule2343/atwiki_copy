@@ -121,30 +121,37 @@ const EditForm = (props: { id: number }) => {
     <div>
       <form>
         {input.enable ? (
-          <div>
-            <input
-              onChange={(e) => {
-                setInput((state) => ({ ...state, text: e.target.value }));
-              }}
-              type="text"
-              value={input.text}
-            />
-            <button
-              className="btn btn-outline-secondary ms-3"
-              onClick={handleSubmit}
-            >
-              保存
-            </button>
+          <div className="container">
+            <div className="row">
+              <input
+                onChange={(e) => {
+                  setInput((state) => ({ ...state, text: e.target.value }));
+                }}
+                type="text"
+                value={input.text}
+                className="col-auto me-3"
+              />
+              <button
+                className="btn btn-outline-secondary col-auto"
+                onClick={handleSubmit}
+              >
+                保存
+              </button>
+            </div>
           </div>
         ) : (
-          <div>
-            <span>{input.text}</span>
-            <button
-              className="btn btn-outline-primary ms-3"
-              onClick={handleInput}
-            >
-              編集
-            </button>
+          <div className="container">
+            <div className="row">
+              <span className="col-auto me-auto d-flex align-items-center">
+                {input.text}
+              </span>
+              <button
+                className="btn btn-outline-primary col-auto"
+                onClick={handleInput}
+              >
+                編集
+              </button>
+            </div>
           </div>
         )}
       </form>
@@ -217,29 +224,39 @@ const EditDate = (props: { id: number }) => {
     <div>
       <form>
         {date.enable ? (
-          <div>
-            <label>
-              <i className="calendar alternate outline icon"></i>
-            </label>
-            <div className="d-inline-block">
-              <DatePicker selected={selectDate} onChange={handleChange} />
+          <div className="container">
+            <div className="row">
+              <label>
+                <i className="calendar alternate outline icon"></i>
+              </label>
+              <div className="d-flex align-items-center col-auto me-auto">
+                <DatePicker selected={selectDate} onChange={handleChange} />
+              </div>
+              <button
+                className="btn btn-outline-primary col-auto"
+                onClick={handleSubmit}
+              >
+                保存
+              </button>
             </div>
-            <button
-              className="btn btn-outline-primary ms-3"
-              onClick={handleSubmit}
-            >
-              保存
-            </button>
           </div>
         ) : (
-          <div>
-            {date.date !== undefined ? <span>{date.date}</span> : <span></span>}
-            <button
-              className="btn btn-outline-primary ms-3"
-              onClick={handleInput}
-            >
-              編集
-            </button>
+          <div className="container">
+            <div className="row">
+              {date.date !== undefined ? (
+                <span className="col-auto me-auto d-flex align-items-center">
+                  {date.date}
+                </span>
+              ) : (
+                <span className="col-auto me-auto"></span>
+              )}
+              <button
+                className="btn btn-outline-primary col-auto"
+                onClick={handleInput}
+              >
+                編集
+              </button>
+            </div>
           </div>
         )}
       </form>
