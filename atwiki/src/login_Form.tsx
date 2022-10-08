@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "./LoginContext";
 
 type loginForm = {
   username: string;
@@ -16,6 +17,10 @@ export const LoginForm = () => {
     formState: { errors },
   } = useForm<loginForm>();
 
+  const { loginUser, setUser } = useContext(UserContext);
+
+  const [error, setError] = useState<string>("");
+
   const onSubmit = (data: loginForm): void => {
     axios
       .post(
@@ -27,9 +32,11 @@ export const LoginForm = () => {
         { withCredentials: true }
       )
       .then((res) => {
+        setUser(res.data);
         navigate("/");
       })
       .catch((error) => {
+        setError("ログインに失敗しました");
         if (error.response) {
           console.log(error);
         }
@@ -51,6 +58,7 @@ export const LoginForm = () => {
         </div>
         <button type="submit"></button>
       </form>
+      <p>{error}</p>
     </div>
   );
 };

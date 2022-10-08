@@ -13,10 +13,8 @@ export const LoginRequire: React.FC<LoginRequiredType> = (props) => {
   React.useEffect(() => {
     axios.get("/is_login", { withCredentials: true }).then((response) => {
       console.log("beforesetLogin", response.data);
-      if (response.data.is_login) {
-        setLogin(response.data.is_login);
-        console.log("useeffect", is_login);
-      }
+      setLogin(response.data.is_login);
+      console.log("useeffect", is_login);
     });
   }, [is_login, setLogin]);
   console.log("is_login", is_login);

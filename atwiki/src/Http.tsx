@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import axiosBase from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { LoginForm } from "./login_Form";
 import { useNavigate } from "react-router";
 import { response } from "express";
-import { LoginContext } from "./LoginContext";
+import { LoginContext, UserContext } from "./LoginContext";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -50,19 +50,24 @@ type DayForm = {
 };
 
 const EditForm = (props: { id: number }) => {
+  const { loginUser, setUser } = useContext(UserContext);
+
   axios.get("/users", { params: { id: props.id } });
+
   const [input, setInput] = React.useState<Form>({
     id: props.id,
     text: "",
     enable: false,
   });
+
   React.useEffect(() => {
     axios
-      .get("/users", { params: { id: props.id } })
+      .get("/users/users/" + props.id)
       .then((response) => {
+        console.log("got user", response.data);
         setInput((state) => ({
           ...state,
-          text: response.data[0].task,
+          text: response.data.task,
         }));
       })
       .catch((error) => {
@@ -77,12 +82,13 @@ const EditForm = (props: { id: number }) => {
       text: input.text,
       enable: !input.enable,
     }));
+
     axios
       .patch("/users/" + props.id, {
         task: input.text,
       })
-      .then(() => {
-        console.log("更新完了");
+      .then((res) => {
+        setUser(res.data);
       })
       .catch((error) => {
         if (error.response) {
@@ -100,7 +106,7 @@ const EditForm = (props: { id: number }) => {
     }));
   };
 
-  return (
+  return loginUser.id === props.id ? (
     <div>
       <form>
         {input.enable ? (
@@ -117,15 +123,23 @@ const EditForm = (props: { id: number }) => {
         ) : (
           <div>
             <span>{input.text}</span>
-            <button onClick={handleInput}>編集</button>
+            <span>
+              <button onClick={handleInput}>編集</button>
+            </span>
           </div>
         )}
       </form>
+    </div>
+  ) : (
+    <div>
+      <span>{input.text}</span>
     </div>
   );
 };
 
 const EditDate = (props: { id: number }) => {
+  const { loginUser, setUser } = useContext(UserContext);
+
   const [date, setDate] = React.useState<DayForm>({
     id: props.id,
     date: "",
@@ -166,7 +180,7 @@ const EditDate = (props: { id: number }) => {
     setDate((state) => ({ ...state, date: stringDate }));
   };
 
-  return (
+  return loginUser.id === props.id ? (
     <div>
       <form>
         {date.enable ? (
@@ -185,6 +199,8 @@ const EditDate = (props: { id: number }) => {
         )}
       </form>
     </div>
+  ) : (
+    <div>{date.date != null ? <span>{date.date}</span> : <span></span>}</div>
   );
 };
 
@@ -278,6 +294,7 @@ export const Loglist: React.FC = () => {
 
 export const Home: React.FC = () => {
   const { is_login, setLogin } = React.useContext(LoginContext);
+  const { loginUser, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
