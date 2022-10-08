@@ -51,12 +51,12 @@ type Form = {
 
 type DayForm = {
   id: number;
-  date: string | null;
+  date: string | undefined;
   enable: boolean;
 };
 
 const EditForm = (props: { id: number }) => {
-  axios.get("/users", { params: { id: props.id } });
+  axios.get(`/users/${props.id}`);
   const [input, setInput] = React.useState<Form>({
     id: props.id,
     text: "",
@@ -69,11 +69,11 @@ const EditForm = (props: { id: number }) => {
 
   React.useEffect(() => {
     axios
-      .get("/users", { params: { id: props.id } })
+      .get(`/users/${props.id}`)
       .then((response) => {
         setInput((state) => ({
           ...state,
-          text: response.data[0].task,
+          text: response.data.task,
         }));
         console.log(response.data);
         setLogData({
@@ -163,7 +163,7 @@ const EditDate = (props: { id: number }) => {
     previousData: "none",
   });
 
-  let selectDate = date.date ? new Date(date.date) : null;
+  let selectDate = date.date ? new Date(date.date) : undefined;
 
   React.useEffect(() => {
     axios.get(`/users/${props.id}`).then((response) => {
@@ -233,7 +233,7 @@ const EditDate = (props: { id: number }) => {
           </div>
         ) : (
           <div>
-            {date.date != null ? <span>{date.date}</span> : <span></span>}
+            {date.date !== undefined ? <span>{date.date}</span> : <span></span>}
             <button
               className="btn btn-outline-primary ms-3"
               onClick={handleInput}
@@ -346,16 +346,16 @@ export const Loglist: React.FC = () => {
   return (
     <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
-      <div>
+      <ul className="list-unstyled">
         {logs.map((log) => (
-          <div>
-            <li key={log.id}>{log.date}</li>
+          <li key={log.id}>
+            {log.date}
             <a className="ms-4" href={log.url}>
               編集箇所
             </a>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };
