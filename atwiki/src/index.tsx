@@ -16,17 +16,27 @@ root.render(
         <div>
           <LoginManager>
             <BrowserRouter>
-              <ul>
-                <li>
-                  <NavLink to="/login">Login</NavLink>
-                </li>
-                <li>
-                  <NavLink to="/register">Sign up</NavLink>
-                </li>
-                <li>
-                  <NavLink to="/">kangi</NavLink>
-                </li>
-              </ul>
+              <nav className="navbar navbar-expand-mg navbar-light bg-light">
+                <div className="container-fluid">
+                  <ul className="navbar-nav d-flex flex-row">
+                    <li className="nav-item me-4">
+                      <NavLink className={"nav-link"} to="/login">
+                        Login
+                      </NavLink>
+                    </li>
+                    <li className="nav-item me-4">
+                      <NavLink className={"nav-link"} to="/register">
+                        Sign up
+                      </NavLink>
+                    </li>
+                    <li className="nav-item me-4">
+                      <NavLink className={"nav-link"} to="/">
+                        kangi
+                      </NavLink>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
               <Routes>
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<CreateUserForm />} />
