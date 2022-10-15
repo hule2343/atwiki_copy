@@ -66,7 +66,7 @@ export const CreateUserForm = () => {
       title: title,
     });
     axios.post(discordUrl, {
-      content: `${title}\n${url}`,
+      content: `${title}`,
     });
   };
 

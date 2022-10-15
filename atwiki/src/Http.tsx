@@ -342,7 +342,7 @@ const leaveLog = (
     })
     .then((response) => {
       axios.post(discordUrl, {
-        content: `${title}\n${url}`,
+        content: `${title}`,
       });
     })
     .catch((error: Error) => {
@@ -367,10 +367,12 @@ export const Loglist: React.FC = () => {
       <div className="w-50">
         <Accordion>
           {logs.map((log) => (
-            <Accordion.Item eventKey={log.id.toString()}>
-              <Accordion.Header>{log.date}</Accordion.Header>
-              <Accordion.Body>{log.title}</Accordion.Body>
-            </Accordion.Item>
+            <div key={log.id}>
+              <Accordion.Item eventKey={log.id.toString()}>
+                <Accordion.Header>{log.date}</Accordion.Header>
+                <Accordion.Body>{log.title}</Accordion.Body>
+              </Accordion.Item>
+            </div>
           ))}
         </Accordion>
       </div>
