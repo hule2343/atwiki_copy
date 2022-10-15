@@ -47,7 +47,6 @@ export const CreateUserForm = () => {
           console.log(error);
         }
       });
-    history("/");
   };
 
   const handleIs_student = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,9 +64,10 @@ export const CreateUserForm = () => {
       url: url,
       title: title,
     });
-    axios.post(discordUrl, {
+    await axios.post(discordUrl, {
       content: `${title}`,
     });
+    history("/");
   };
 
   return (

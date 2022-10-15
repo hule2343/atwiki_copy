@@ -1,6 +1,8 @@
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { axios } from "./Http";
+import { LoginSetContext } from "./LoginContext";
 
 type loginForm = {
   username: string;
@@ -14,6 +16,7 @@ export const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<loginForm>();
+  const setLogin = useContext(LoginSetContext);
 
   const onSubmit = (data: loginForm): void => {
     axios
@@ -25,8 +28,18 @@ export const LoginForm = () => {
         },
         { withCredentials: true }
       )
-      .then((res) => {
-        navigate("/");
+      .then(() => {
+        axios
+          .get("/is_login", { withCredentials: true })
+          .then((response) => {
+            console.log("beforesetLogin", response.data);
+            if (response.data.is_login) {
+              setLogin(true);
+            }
+          })
+          .then((res) => {
+            navigate("/");
+          });
       })
       .catch((error) => {
         if (error.response) {

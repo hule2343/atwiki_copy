@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 
-type LoginContextType = {
-  is_login: boolean;
-  setLogin: React.Dispatch<React.SetStateAction<boolean>>;
-};
 type Props = {
   children: React.ReactNode;
 };
 
-export const LoginContext = React.createContext({} as LoginContextType);
+export const LoginContext = React.createContext(false);
+export const LoginSetContext = React.createContext((b: boolean) => {});
 
 export const LoginManager: React.FC<Props> = ({ children }) => {
   const [is_login, setLogin] = useState<boolean>(false);
 
-  const value = {
-    is_login,
-    setLogin,
+  React.useEffect(() => {
+    console.log("is_login is changed to " + is_login);
+  }, [is_login]);
+
+  const setLoginInfo = (bool: boolean) => {
+    setLogin(bool);
   };
 
   return (
-    <LoginContext.Provider value={value}>{children}</LoginContext.Provider>
+    <LoginSetContext.Provider value={setLoginInfo}>
+      <LoginContext.Provider value={is_login}>{children}</LoginContext.Provider>
+    </LoginSetContext.Provider>
   );
 };
