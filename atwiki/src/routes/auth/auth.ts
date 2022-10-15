@@ -49,7 +49,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 
 authRouter.get("/is_login", (req, res) => {
   console.log("/logout", req.isAuthenticated());
-  console.log(req.user);
+  console.log("is_login called", req.user);
   res.json({ is_login: req.isAuthenticated() });
 });
 

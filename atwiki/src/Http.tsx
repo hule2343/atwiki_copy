@@ -79,12 +79,10 @@ const EditForm = (props: { id: number }) => {
     axios
       .get(`/users/${props.id}`)
       .then((response) => {
-        console.log("got user", response.data);
         setInput((state) => ({
           ...state,
           text: response.data.task,
         }));
-        console.log(response.data);
         setLogData({
           name: response.data.name,
           previousData: response.data.task,
@@ -396,6 +394,18 @@ export const Loglist: React.FC = () => {
   );
 };
 
+const TestUserInfo: React.FC = () => {
+  const { loginUser, setUser } = useContext(UserContext);
+
+  return (
+    <div>
+      <li>{loginUser.id}</li>
+      <li>{loginUser.name}</li>
+      <li>{loginUser.email}</li>
+    </div>
+  );
+};
+
 export const Home: React.FC = () => {
   const { is_login, setLogin } = React.useContext(LoginContext);
   const { loginUser, setUser } = useContext(UserContext);
@@ -406,6 +416,8 @@ export const Home: React.FC = () => {
       .post("/logout", { withCredentials: true })
       .then((response) => {
         setLogin(response.data.is_login);
+        localStorage.clear();
+        sessionStorage.clear();
         console.log("logout response data", response.data);
       })
       .catch((error) => {
@@ -419,7 +431,10 @@ export const Home: React.FC = () => {
 
   return (
     <div>
-      <button onClick={handleLogout}>ログアウト</button>
+      <button onClick={handleLogout}>アカウント切り替え</button>
+      <div>
+        <TestUserInfo />
+      </div>
       <div>
         <MemberList />
       </div>

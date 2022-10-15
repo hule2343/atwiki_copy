@@ -38,7 +38,7 @@ userRouter.post("/user", async (req, res) => {
     },
   });
 
-  res.json({ user });
+  res.json(user);
 });
 
 userRouter.patch("/:id/", async (req, res) => {
@@ -60,7 +60,7 @@ userRouter.patch("/:id/", async (req, res) => {
     },
   });
 
-  res.json({ user });
+  res.json(user);
 });
 
 export default userRouter;
