@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { axios } from "./Http";
 
 type loginForm = {
   username: string;
@@ -38,18 +37,32 @@ export const LoginForm = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="ms-3">
         <div>
-          <label htmlFor="name">名前</label>
-          <input id="name" {...register("username", { required: true })} />
+          <label htmlFor="name" className="form-label">
+            名前
+          </label>
+          <input
+            id="name"
+            className="form-control w-auto"
+            {...register("username", { required: true })}
+          />
           {errors.username && <div>必須項目です</div>}
         </div>
-        <div>
-          <label htmlFor="password">パスワード</label>
-          <input id="password" {...register("password", { required: true })} />
+        <div className="mt-2">
+          <label htmlFor="password" className="form-label">
+            パスワード
+          </label>
+          <input
+            id="password"
+            className="form-control w-auto"
+            {...register("password", { required: true })}
+          />
           {errors.password && <div>必須項目です</div>}
         </div>
-        <button type="submit"></button>
+        <button type="submit" className="btn btn-outline-primary mt-2">
+          Login
+        </button>
       </form>
     </div>
   );

@@ -1,7 +1,8 @@
+import { format } from "date-fns";
 import React, { useState } from "react";
-import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { axios, discordUrl } from "./Http";
 
 type UserForm = {
   name: string;
@@ -9,6 +10,13 @@ type UserForm = {
   phonenumber: string;
   password: string;
   is_student: boolean;
+};
+
+type Log = {
+  id: number;
+  url: string;
+  date: string;
+  title: string;
 };
 
 export const CreateUserForm = () => {
@@ -31,6 +39,9 @@ export const CreateUserForm = () => {
         password: data.password,
         is_student: is_student,
       })
+      .then(() => {
+        leaveSingupLog(data.name);
+      })
       .catch((error) => {
         if (error.response) {
           console.log(error);
@@ -43,32 +54,78 @@ export const CreateUserForm = () => {
     setBoolean(e.target.checked);
   };
 
+  const leaveSingupLog = async (name: string) => {
+    const now = new Date();
+    const date = format(now, "yyyy/MM/dd");
+    const logData: Log = await axios.get("/logs");
+    const url = `http://localhost:3001/logs/${logData.id + 1}`;
+    const title = `${name}さんがatwikiに登録されました`;
+    await axios.post("/logs/log", {
+      date: date,
+      url: url,
+      title: title,
+    });
+    axios.post(discordUrl, {
+      content: `${title}`,
+    });
+  };
+
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="name">名前</label>
-          <input id="name" {...register("name", { required: true })} />
+      <form onSubmit={handleSubmit(onSubmit)} className="ms-3">
+        <div className="mt-2">
+          <label htmlFor="name" className="form-label">
+            名前
+          </label>
+          <input
+            id="name"
+            className="form-control w-auto"
+            {...register("name", { required: true })}
+          />
           {errors.name && <div>必須項目です</div>}
         </div>
-        <div>
-          <label htmlFor="email">メールアドレス</label>
-          <input id="email" {...register("email", { required: true })} />
+        <div className="mt-2">
+          <label htmlFor="email" className="form-label">
+            メールアドレス
+          </label>
+          <input
+            id="email"
+            className="form-control w-auto"
+            {...register("email", { required: true })}
+          />
           {errors.name && <div>必須項目です</div>}
         </div>
-        <div>
-          <label htmlFor="phonenumber">電話番号</label>
-          <input id="phonenumber" {...register("phonenumber")} />
+        <div className="mt-2">
+          <label htmlFor="phonenumber" className="form-label">
+            電話番号
+          </label>
+          <input
+            id="phonenumber"
+            className="form-control w-auto"
+            {...register("phonenumber")}
+          />
         </div>
-        <div>
-          <label htmlFor="password">パスワード</label>
-          <input id="password" {...register("password", { required: true })} />
+        <div className="mt-2">
+          <label htmlFor="password" className="form-label">
+            パスワード
+          </label>
+          <input
+            id="password"
+            className="form-control w-auto"
+            {...register("password", { required: true })}
+          />
         </div>
-        <div>
-          <label>学生</label>
-          <input type="checkbox" onChange={handleIs_student} />
+        <div className="mt-2">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            onChange={handleIs_student}
+          />
+          <label className="form-check-label ms-2">学生</label>
         </div>
-        <button type="submit"></button>
+        <button type="submit" className="btn btn-outline-primary mt-2">
+          Sign up
+        </button>
       </form>
     </div>
   );

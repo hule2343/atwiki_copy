@@ -1,9 +1,9 @@
-import React from "react";
 import axiosBase from "axios";
+import { format } from "date-fns";
+import React from "react";
+import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
-import { LoginForm } from "./login_Form";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -17,6 +17,11 @@ export const axios = axiosBase.create({
   timeout: 2000,
   responseType: "json",
 });
+// discordのWebhook URL (test server)
+export const discordUrl =
+  "https://discord.com/api/webhooks/1018031676632342538/dnLwhYYOt_U14Nj_3mmevObgBiJR3K9MIqNdsftTcO9R-BXjC1vPEUEVwH6v_uV4nWNF";
+
+let logId = 0;
 
 type Member = {
   id: number;
@@ -32,6 +37,12 @@ type Log = {
   id: number;
   url: string;
   date: string;
+  title: string;
+};
+
+type PreviousLogData = {
+  name: string;
+  previousData: string;
 };
 
 type Form = {
@@ -42,25 +53,35 @@ type Form = {
 
 type DayForm = {
   id: number;
-  date: string | null;
+  date: string | undefined;
   enable: boolean;
 };
 
 const EditForm = (props: { id: number }) => {
-  axios.get("/users", { params: { id: props.id } });
+  axios.get(`/users/${props.id}`);
   const [input, setInput] = React.useState<Form>({
     id: props.id,
     text: "",
     enable: false,
   });
+  const [logData, setLogData] = React.useState<PreviousLogData>({
+    name: "",
+    previousData: "",
+  });
+
   React.useEffect(() => {
     axios
-      .get("/users", { params: { id: props.id } })
+      .get(`/users/${props.id}`)
       .then((response) => {
         setInput((state) => ({
           ...state,
-          text: response.data[0].task,
+          text: response.data.task,
         }));
+        console.log(response.data);
+        setLogData({
+          name: response.data.name,
+          previousData: response.data.task,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -86,7 +107,8 @@ const EditForm = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog("/users");
+    leaveLog(logData.name, "進捗状況", logData.previousData, input.text);
+    setLogData((state) => ({ ...state, previousData: input.text }));
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -101,20 +123,37 @@ const EditForm = (props: { id: number }) => {
     <div>
       <form>
         {input.enable ? (
-          <div>
-            <input
-              onChange={(e) => {
-                setInput((state) => ({ ...state, text: e.target.value }));
-              }}
-              type="text"
-              value={input.text}
-            />
-            <button onClick={handleSubmit}>保存</button>
+          <div className="container">
+            <div className="row">
+              <input
+                onChange={(e) => {
+                  setInput((state) => ({ ...state, text: e.target.value }));
+                }}
+                type="text"
+                value={input.text}
+                className="col-auto me-3"
+              />
+              <button
+                className="btn btn-outline-secondary col-auto"
+                onClick={handleSubmit}
+              >
+                保存
+              </button>
+            </div>
           </div>
         ) : (
-          <div>
-            <span>{input.text}</span>
-            <button onClick={handleInput}>編集</button>
+          <div className="container">
+            <div className="row">
+              <span className="col-auto me-auto d-flex align-items-center">
+                {input.text}
+              </span>
+              <button
+                className="btn btn-outline-primary col-auto"
+                onClick={handleInput}
+              >
+                編集
+              </button>
+            </div>
           </div>
         )}
       </form>
@@ -128,10 +167,20 @@ const EditDate = (props: { id: number }) => {
     date: "",
     enable: false,
   });
+  const [logData, setLogData] = React.useState<PreviousLogData>({
+    name: "",
+    previousData: "none",
+  });
+
+  let selectDate = date.date ? new Date(date.date) : undefined;
 
   React.useEffect(() => {
-    axios.get("/users", { params: { id: props.id } }).then((response) => {
-      setDate((state) => ({ ...state, date: response.data[0].absent }));
+    axios.get(`/users/${props.id}`).then((response) => {
+      setDate((state) => ({ ...state, date: response.data.absent }));
+      setLogData({
+        name: response.data.name,
+        previousData: response.data.absent,
+      });
     });
   }, [props.id]);
 
@@ -140,7 +189,7 @@ const EditDate = (props: { id: number }) => {
     setDate((state) => ({ ...state, enable: !date.enable }));
     axios
       .patch("/users/" + props.id, {
-        absent: date.date,
+        date: date.date,
       })
       .then(() => {
         setDate((state) => ({ ...state, date: date.date }));
@@ -150,7 +199,16 @@ const EditDate = (props: { id: number }) => {
           console.log(error);
         }
       });
-    leaveLog("/users");
+    leaveLog(
+      logData.name,
+      "欠席予定日",
+      logData.previousData,
+      date.date ? date.date : "none"
+    );
+    setLogData((state) => ({
+      ...state,
+      previousData: date.date ? date.date : "none",
+    }));
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -160,6 +218,7 @@ const EditDate = (props: { id: number }) => {
 
   const handleChange = (date: Date) => {
     const stringDate = format(date, "yyyy/MM/dd");
+    selectDate = date;
     setDate((state) => ({ ...state, date: stringDate }));
   };
 
@@ -167,17 +226,39 @@ const EditDate = (props: { id: number }) => {
     <div>
       <form>
         {date.enable ? (
-          <div>
-            <label>
-              <i className="calendar alternate outline icon"></i>
-            </label>
-            <DatePicker onChange={handleChange} />
-            <button onClick={handleSubmit}>保存</button>
+          <div className="container">
+            <div className="row">
+              <label>
+                <i className="calendar alternate outline icon"></i>
+              </label>
+              <div className="d-flex align-items-center col-auto me-auto">
+                <DatePicker selected={selectDate} onChange={handleChange} />
+              </div>
+              <button
+                className="btn btn-outline-primary col-auto"
+                onClick={handleSubmit}
+              >
+                保存
+              </button>
+            </div>
           </div>
         ) : (
-          <div>
-            {date.date != null ? <span>{date.date}</span> : <span></span>}
-            <button onClick={handleInput}>編集</button>
+          <div className="container">
+            <div className="row">
+              {date.date !== undefined ? (
+                <span className="col-auto me-auto d-flex align-items-center">
+                  {date.date}
+                </span>
+              ) : (
+                <span className="col-auto me-auto"></span>
+              )}
+              <button
+                className="btn btn-outline-primary col-auto"
+                onClick={handleInput}
+              >
+                編集
+              </button>
+            </div>
           </div>
         )}
       </form>
@@ -199,9 +280,9 @@ export const MemberList: React.FC = () => {
   });
 
   return (
-    <div>
-      <table border={1}>
-        <thead>
+    <div className="p-4">
+      <table className="table table-hover table-bordered align-middle w-auto">
+        <thead className="table-light">
           <tr>
             <th>名前</th>
             <th>欠席予定</th>
@@ -223,8 +304,8 @@ export const MemberList: React.FC = () => {
         </tbody>
       </table>
 
-      <table border={1}>
-        <thead>
+      <table className="table table-bordered align-middle w-auto">
+        <thead className="table-light">
           <tr>
             <th>名前</th>
             <th>連絡</th>
@@ -243,10 +324,30 @@ export const MemberList: React.FC = () => {
   );
 };
 
-const leaveLog = (url: string) => {
+const leaveLog = (
+  userName: string,
+  type: string,
+  previousData: string,
+  changedData: string
+) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd");
-  axios.post("/logs/log", { url: url, date: date });
+  const url = `http://localhost:3001/logs/${logId + 1}`;
+  const title = `${userName}の${type}が${previousData}から${changedData}に変更`;
+  axios
+    .post("/logs/log", {
+      date: date,
+      url: url,
+      title: title,
+    })
+    .then((response) => {
+      axios.post(discordUrl, {
+        content: `${title}`,
+      });
+    })
+    .catch((error: Error) => {
+      console.log(error.message);
+    });
 };
 
 export const Loglist: React.FC = () => {
@@ -254,21 +355,27 @@ export const Loglist: React.FC = () => {
 
   React.useEffect(() => {
     axios.get("/logs").then((response) => {
+      console.log(response.data);
       setLog(response.data);
+      logId = response.data.length;
     });
   }, []);
 
   return (
-    <div>
+    <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
-      <h4>
-        {logs.map((log) => (
-          <div>
-            <li key={log.id}>{log.date}</li>
-            <a href={log.url}>編集箇所</a>
-          </div>
-        ))}
-      </h4>
+      <div className="w-50">
+        <Accordion>
+          {logs.map((log) => (
+            <div key={log.id}>
+              <Accordion.Item eventKey={log.id.toString()}>
+                <Accordion.Header>{log.date}</Accordion.Header>
+                <Accordion.Body>{log.title}</Accordion.Body>
+              </Accordion.Item>
+            </div>
+          ))}
+        </Accordion>
+      </div>
     </div>
   );
 };

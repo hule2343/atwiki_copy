@@ -1,5 +1,5 @@
-import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
+import { Router } from "express";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,7 @@ userRouter.get("/", async (req, res) => {
   res.json(users);
 });
 
-userRouter.get("/users/:id", async (req, res) => {
+userRouter.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   const user = await prisma.user.findFirst({
