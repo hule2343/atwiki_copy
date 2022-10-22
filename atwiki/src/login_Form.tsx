@@ -36,8 +36,9 @@ export const LoginForm = () => {
       .then((response) => {
         setUser(response.data);
         axios
-          .get("is_login")
+          .get("is_login", { withCredentials: true })
           .then((response) => {
+            console.log(response.data.is_login, "is_login_result");
             setLogin(response.data.is_login);
           })
           .then((res) => {
