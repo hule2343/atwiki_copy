@@ -61,6 +61,29 @@ type DayForm = {
   enable: boolean;
 };
 
+type TabelCellType = {
+  cellvalue: string | undefined;
+  onClick: (e: React.MouseEvent) => void;
+};
+
+const TableCell = (props: TabelCellType) => {
+  return (
+    <div className="container">
+      <div className="row">
+        <span className="col-auto me-auto d-flex align-items-center">
+          {props.cellvalue}
+        </span>
+        <button
+          className="btn btn-outline-primary col-auto"
+          onClick={props.onClick}
+        >
+          編集
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const EditForm = (props: { id: number }) => {
   const { loginUser, setUser } = useContext(UserContext);
 
@@ -148,19 +171,9 @@ const EditForm = (props: { id: number }) => {
             </div>
           </div>
         ) : (
-          <div className="container">
-            <div className="row">
-              <span className="col-auto me-auto d-flex align-items-center">
-                {input.text}
-              </span>
-              <button
-                className="btn btn-outline-primary col-auto"
-                onClick={handleInput}
-              >
-                編集
-              </button>
-            </div>
-          </div>
+          <>
+            <TableCell cellvalue={input.text} onClick={handleInput} />
+          </>
         )}
       </form>
     </div>
@@ -176,7 +189,7 @@ const EditDate = (props: { id: number }) => {
 
   const [date, setDate] = React.useState<DayForm>({
     id: props.id,
-    date: "",
+    date: " ",
     enable: false,
   });
   const [logData, setLogData] = React.useState<PreviousLogData>({
@@ -255,23 +268,9 @@ const EditDate = (props: { id: number }) => {
             </div>
           </div>
         ) : (
-          <div className="container">
-            <div className="row">
-              {date.date !== undefined ? (
-                <span className="col-auto me-auto d-flex align-items-center">
-                  {date.date}
-                </span>
-              ) : (
-                <span className="col-auto me-auto"></span>
-              )}
-              <button
-                className="btn btn-outline-primary col-auto"
-                onClick={handleInput}
-              >
-                編集
-              </button>
-            </div>
-          </div>
+          <>
+            <TableCell cellvalue={date.date} onClick={handleInput} />
+          </>
         )}
       </form>
     </div>
