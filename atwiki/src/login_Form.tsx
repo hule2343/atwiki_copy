@@ -33,29 +33,21 @@ export const LoginForm = () => {
         },
         { withCredentials: true }
       )
-<<<<<<< HEAD
-      .then((res) => {
-        setUser(res.data);
-        navigate("/");
-=======
-      .then(() => {
+      .then((response) => {
+        setUser(response.data);
         axios
-          .get("/is_login", { withCredentials: true })
+          .get("is_login")
           .then((response) => {
-            console.log("beforesetLogin", response.data);
-            if (response.data.is_login) {
-              setLogin(true);
-            }
+            setLogin(response.data.is_login);
           })
           .then((res) => {
             navigate("/");
           });
->>>>>>> main
       })
       .catch((error) => {
         setError("ログインに失敗しました");
+        console.log(error);
         if (error.response) {
-          console.log(error);
         }
       });
   };

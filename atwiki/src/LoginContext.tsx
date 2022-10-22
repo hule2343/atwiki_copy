@@ -46,8 +46,12 @@ export const LoginManager: React.FC<Props> = ({ children }) => {
   };
 
   return (
-    <LoginSetContext.Provider value={setLoginInfo}>
-      <LoginContext.Provider value={is_login}>{children}</LoginContext.Provider>
-    </LoginSetContext.Provider>
+    <UserContext.Provider value={user}>
+      <LoginSetContext.Provider value={setLoginInfo}>
+        <LoginContext.Provider value={is_login}>
+          {children}
+        </LoginContext.Provider>
+      </LoginSetContext.Provider>
+    </UserContext.Provider>
   );
 };

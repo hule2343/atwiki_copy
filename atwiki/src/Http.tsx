@@ -399,7 +399,6 @@ const TestUserInfo: React.FC = () => {
 
   return (
     <div>
-      <li>{loginUser.id}</li>
       <li>{loginUser.name}</li>
       <li>{loginUser.email}</li>
     </div>
@@ -407,7 +406,7 @@ const TestUserInfo: React.FC = () => {
 };
 
 export const Home: React.FC = () => {
-  const { is_login, setLogin } = React.useContext(LoginContext);
+  const is_login = React.useContext(LoginContext);
   const { loginUser, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const handleLogout = (e: React.MouseEvent) => {
@@ -415,7 +414,6 @@ export const Home: React.FC = () => {
     axios
       .post("/logout", { withCredentials: true })
       .then((response) => {
-        setLogin(response.data.is_login);
         localStorage.clear();
         sessionStorage.clear();
         console.log("logout response data", response.data);
