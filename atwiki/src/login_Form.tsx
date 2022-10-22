@@ -3,6 +3,7 @@ import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./LoginContext";
+import { LoginSetContext } from "./LoginContext";
 
 type loginForm = {
   username: string;
@@ -16,6 +17,7 @@ export const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<loginForm>();
+  const setLogin = useContext(LoginSetContext);
 
   const { loginUser, setUser } = useContext(UserContext);
 
@@ -31,9 +33,24 @@ export const LoginForm = () => {
         },
         { withCredentials: true }
       )
+<<<<<<< HEAD
       .then((res) => {
         setUser(res.data);
         navigate("/");
+=======
+      .then(() => {
+        axios
+          .get("/is_login", { withCredentials: true })
+          .then((response) => {
+            console.log("beforesetLogin", response.data);
+            if (response.data.is_login) {
+              setLogin(true);
+            }
+          })
+          .then((res) => {
+            navigate("/");
+          });
+>>>>>>> main
       })
       .catch((error) => {
         setError("ログインに失敗しました");

@@ -10,12 +10,14 @@ type LoginUserType = {
   loginUser: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
 };
+
 type Props = {
   children: React.ReactNode;
 };
 
-export const LoginContext = React.createContext({} as LoginContextType);
 export const UserContext = React.createContext({} as LoginUserType);
+export const LoginContext = React.createContext(false);
+export const LoginSetContext = React.createContext((b: boolean) => {});
 
 export const LoginManager: React.FC<Props> = ({ children }) => {
   const defaultUser: User = {
@@ -30,9 +32,12 @@ export const LoginManager: React.FC<Props> = ({ children }) => {
   const [is_login, setLogin] = useState<boolean>(false);
   const [loginUser, setUser] = useState<User>(defaultUser);
 
-  const value = {
-    is_login,
-    setLogin,
+  React.useEffect(() => {
+    console.log("is_login is changed to " + is_login);
+  }, [is_login]);
+
+  const setLoginInfo = (bool: boolean) => {
+    setLogin(bool);
   };
 
   const user = {
@@ -41,8 +46,8 @@ export const LoginManager: React.FC<Props> = ({ children }) => {
   };
 
   return (
-    <LoginContext.Provider value={value}>
-      <UserContext.Provider value={user}>{children}</UserContext.Provider>
-    </LoginContext.Provider>
+    <LoginSetContext.Provider value={setLoginInfo}>
+      <LoginContext.Provider value={is_login}>{children}</LoginContext.Provider>
+    </LoginSetContext.Provider>
   );
 };
