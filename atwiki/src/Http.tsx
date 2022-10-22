@@ -1,9 +1,13 @@
+import React, { useContext, useEffect } from "react";
 import axiosBase from "axios";
 import { format } from "date-fns";
-import React from "react";
 import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { LoginForm } from "./login_Form";
+import { useNavigate } from "react-router";
+import { response } from "express";
+import { LoginContext, UserContext } from "./LoginContext";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -23,7 +27,7 @@ export const discordUrl =
 
 let logId = 0;
 
-type Member = {
+export type User = {
   id: number;
   name: string;
   email: string;
@@ -57,7 +61,32 @@ type DayForm = {
   enable: boolean;
 };
 
+type TabelCellType = {
+  cellvalue: string | undefined;
+  onClick: (e: React.MouseEvent) => void;
+};
+
+const TableCell = (props: TabelCellType) => {
+  return (
+    <div className="container">
+      <div className="row">
+        <span className="col-auto me-auto d-flex align-items-center">
+          {props.cellvalue}
+        </span>
+        <button
+          className="btn btn-outline-primary col-auto"
+          onClick={props.onClick}
+        >
+          編集
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const EditForm = (props: { id: number }) => {
+  const { loginUser, setUser } = useContext(UserContext);
+
   axios.get(`/users/${props.id}`);
   const [input, setInput] = React.useState<Form>({
     id: props.id,
@@ -77,7 +106,6 @@ const EditForm = (props: { id: number }) => {
           ...state,
           text: response.data.task,
         }));
-        console.log(response.data);
         setLogData({
           name: response.data.name,
           previousData: response.data.task,
@@ -95,12 +123,13 @@ const EditForm = (props: { id: number }) => {
       text: input.text,
       enable: !input.enable,
     }));
+
     axios
       .patch("/users/" + props.id, {
         task: input.text,
       })
-      .then(() => {
-        console.log("更新完了");
+      .then((res) => {
+        setUser(res.data);
       })
       .catch((error) => {
         if (error.response) {
@@ -119,7 +148,7 @@ const EditForm = (props: { id: number }) => {
     }));
   };
 
-  return (
+  return loginUser.id === props.id ? (
     <div>
       <form>
         {input.enable ? (
@@ -142,29 +171,25 @@ const EditForm = (props: { id: number }) => {
             </div>
           </div>
         ) : (
-          <div className="container">
-            <div className="row">
-              <span className="col-auto me-auto d-flex align-items-center">
-                {input.text}
-              </span>
-              <button
-                className="btn btn-outline-primary col-auto"
-                onClick={handleInput}
-              >
-                編集
-              </button>
-            </div>
-          </div>
+          <>
+            <TableCell cellvalue={input.text} onClick={handleInput} />
+          </>
         )}
       </form>
+    </div>
+  ) : (
+    <div>
+      <span>{input.text}</span>
     </div>
   );
 };
 
 const EditDate = (props: { id: number }) => {
+  const { loginUser, setUser } = useContext(UserContext);
+
   const [date, setDate] = React.useState<DayForm>({
     id: props.id,
-    date: "",
+    date: " ",
     enable: false,
   });
   const [logData, setLogData] = React.useState<PreviousLogData>({
@@ -222,7 +247,7 @@ const EditDate = (props: { id: number }) => {
     setDate((state) => ({ ...state, date: stringDate }));
   };
 
-  return (
+  return loginUser.id === props.id ? (
     <div>
       <form>
         {date.enable ? (
@@ -243,31 +268,19 @@ const EditDate = (props: { id: number }) => {
             </div>
           </div>
         ) : (
-          <div className="container">
-            <div className="row">
-              {date.date !== undefined ? (
-                <span className="col-auto me-auto d-flex align-items-center">
-                  {date.date}
-                </span>
-              ) : (
-                <span className="col-auto me-auto"></span>
-              )}
-              <button
-                className="btn btn-outline-primary col-auto"
-                onClick={handleInput}
-              >
-                編集
-              </button>
-            </div>
-          </div>
+          <>
+            <TableCell cellvalue={date.date} onClick={handleInput} />
+          </>
         )}
       </form>
     </div>
+  ) : (
+    <div>{date.date != null ? <span>{date.date}</span> : <span></span>}</div>
   );
 };
 
 export const MemberList: React.FC = () => {
-  const [members, setMembers] = React.useState<Member[]>([]);
+  const [members, setMembers] = React.useState<User[]>([]);
 
   React.useEffect(() => {
     axios.get("/users").then((response) => {
@@ -380,9 +393,45 @@ export const Loglist: React.FC = () => {
   );
 };
 
-export const Home: React.FC = () => {
+const TestUserInfo: React.FC = () => {
+  const { loginUser, setUser } = useContext(UserContext);
+
   return (
     <div>
+      <li>{loginUser.name}</li>
+      <li>{loginUser.email}</li>
+    </div>
+  );
+};
+
+export const Home: React.FC = () => {
+  const is_login = React.useContext(LoginContext);
+  const { loginUser, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    axios
+      .post("/logout", { withCredentials: true })
+      .then((response) => {
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log("logout response data", response.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log("logout failed");
+          console.log(error);
+        }
+      });
+    navigate("/login");
+  };
+
+  return (
+    <div>
+      <button onClick={handleLogout}>アカウント切り替え</button>
+      <div>
+        <TestUserInfo />
+      </div>
       <div>
         <MemberList />
       </div>

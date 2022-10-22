@@ -1,7 +1,8 @@
-import { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { axios } from "./Http";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { axios } from "./Http";
+import { UserContext } from "./LoginContext";
 import { LoginSetContext } from "./LoginContext";
 
 type loginForm = {
@@ -18,6 +19,10 @@ export const LoginForm = () => {
   } = useForm<loginForm>();
   const setLogin = useContext(LoginSetContext);
 
+  const { loginUser, setUser } = useContext(UserContext);
+
+  const [error, setError] = useState<string>("");
+
   const onSubmit = (data: loginForm): void => {
     axios
       .post(
@@ -28,22 +33,22 @@ export const LoginForm = () => {
         },
         { withCredentials: true }
       )
-      .then(() => {
+      .then((response) => {
+        setUser(response.data);
         axios
-          .get("/is_login", { withCredentials: true })
+          .get("is_login", { withCredentials: true })
           .then((response) => {
-            console.log("beforesetLogin", response.data);
-            if (response.data.is_login) {
-              setLogin(true);
-            }
+            console.log(response.data.is_login, "is_login_result");
+            setLogin(response.data.is_login);
           })
           .then((res) => {
             navigate("/");
           });
       })
       .catch((error) => {
+        setError("ログインに失敗しました");
+        console.log(error);
         if (error.response) {
-          console.log(error);
         }
       });
   };
@@ -77,6 +82,7 @@ export const LoginForm = () => {
           Login
         </button>
       </form>
+      <p>{error}</p>
     </div>
   );
 };

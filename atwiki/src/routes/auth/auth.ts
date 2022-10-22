@@ -17,12 +17,13 @@ authRouter.get("/login/fail", (req: Request, res: Response) => {
   res.status(401).json({ message: "login was failured" });
 });
 
-authRouter.get("/logout", (req: Request, res: Response) => {
+authRouter.post("/logout", (req: Request, res: Response) => {
   req.logout((err) => {
     if (err) {
       res.status(401);
     }
   });
+  res.redirect("/is_login");
 });
 
 authRouter.post("/register", async (req: Request, res: Response) => {
@@ -46,8 +47,10 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     .catch(() => res.status(400).json("Unable to add user"));
 });
 
-authRouter.get("/is_login", isLoggedIn, (req, res) => {
-  res.json({ is_login: true });
+authRouter.get("/is_login", (req, res) => {
+  console.log("/logout", req.isAuthenticated());
+  console.log("is_login called", req.user);
+  res.json({ is_login: req.isAuthenticated() });
 });
 
 const registerSchema = joi.object().keys({

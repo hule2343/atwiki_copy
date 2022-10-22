@@ -14,7 +14,7 @@ userRouter.get("/", async (req, res) => {
 userRouter.get("/:id", async (req, res) => {
   const { id } = req.params;
 
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: {
       id: Number(id),
     },
@@ -38,7 +38,7 @@ userRouter.post("/user", async (req, res) => {
     },
   });
 
-  res.json({ user });
+  res.json(user);
 });
 
 userRouter.patch("/:id/", async (req, res) => {
@@ -60,7 +60,7 @@ userRouter.patch("/:id/", async (req, res) => {
     },
   });
 
-  res.json({ user });
+  res.json(user);
 });
 
 export default userRouter;
