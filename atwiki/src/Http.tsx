@@ -148,35 +148,17 @@ const EditForm = (props: { id: number }) => {
     }));
   };
 
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setInput((state) => ({ ...state, text: event.target.value }));
+  };
+
   return loginUser.id === props.id ? (
-    <div>
-      <form>
-        {input.enable ? (
-          <div className="container">
-            <div className="row">
-              <input
-                onChange={(e) => {
-                  setInput((state) => ({ ...state, text: e.target.value }));
-                }}
-                type="text"
-                value={input.text}
-                className="col-auto me-3"
-              />
-              <button
-                className="btn btn-outline-secondary col-auto"
-                onClick={handleSubmit}
-              >
-                保存
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <TableCell cellvalue={input.text} onClick={handleInput} />
-          </>
-        )}
-      </form>
-    </div>
+    <EditField
+      input={input}
+      handleSubmit={handleSubmit}
+      handleInput={handleInput}
+      onChange={onChange}
+    />
   ) : (
     <div>
       <span>{input.text}</span>
@@ -276,6 +258,129 @@ const EditDate = (props: { id: number }) => {
     </div>
   ) : (
     <div>{date.date != null ? <span>{date.date}</span> : <span></span>}</div>
+  );
+};
+
+const EdiTable = (props: { id: number }) => {
+  const { loginUser, setUser } = useContext(UserContext);
+
+  axios.get(`/users/${props.id}`);
+  const [input, setInput] = React.useState<Form>({
+    id: props.id,
+    text: "",
+    enable: false,
+  });
+  const [logData, setLogData] = React.useState<PreviousLogData>({
+    name: "",
+    previousData: "",
+  });
+
+  React.useEffect(() => {
+    axios
+      .get(`/users/${props.id}`)
+      .then((response) => {
+        setInput((state) => ({
+          ...state,
+          text: response.data.task,
+        }));
+        setLogData({
+          name: response.data.name,
+          previousData: response.data.task,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [props.id]);
+
+  const handleSubmit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setInput((state) => ({
+      ...state,
+      text: input.text,
+      enable: !input.enable,
+    }));
+
+    axios
+      .patch("/users/" + props.id, {
+        task: input.text,
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error);
+        }
+      });
+    leaveLog(logData.name, "進捗状況", logData.previousData, input.text);
+    setLogData((state) => ({ ...state, previousData: input.text }));
+  };
+
+  const handleInput = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setInput((state) => ({
+      ...state,
+      enable: !input.enable,
+    }));
+  };
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setInput((state) => ({ ...state, text: event.target.value }));
+  };
+
+  return loginUser.id === props.id ? (
+    <EditField
+      input={input}
+      handleSubmit={handleSubmit}
+      handleInput={handleInput}
+      onChange={onChange}
+    />
+  ) : (
+    <div>
+      <span>{input.text}</span>
+    </div>
+  );
+};
+
+type EditFieldProps = {
+  input: Form;
+  handleSubmit: (event: React.MouseEvent) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInput: (event: React.MouseEvent) => void;
+};
+
+const EditField = (props: EditFieldProps) => {
+  return (
+    <div>
+      <form>
+        {props.input.enable ? (
+          <div className="container">
+            <div className="row">
+              <input
+                onChange={props.onChange}
+                type="text"
+                value={props.input.text}
+                className="col-auto me-3"
+              />
+              <button
+                className="btn btn-outline-secondary col-auto"
+                onClick={props.handleSubmit}
+              >
+                保存
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <TableCell
+              cellvalue={props.input.text}
+              onClick={props.handleInput}
+            />
+          </>
+        )}
+      </form>
+    </div>
   );
 };
 
