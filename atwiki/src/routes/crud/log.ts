@@ -1,5 +1,6 @@
-import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
+import { Router } from "express";
+import * as fs from "fs";
 
 const prisma = new PrismaClient();
 
@@ -24,17 +25,15 @@ logRouter.get("/:id", async (req, res) => {
 });
 
 logRouter.post("/log", async (req, res) => {
-  const { date, url, title } = req.body;
+  const { date, title } = req.body;
 
-  const log = await prisma.log.create({
-    data: {
-      date: date,
-      url: url,
-      title: title,
-    },
-  });
-
-  res.json({ log });
+  try {
+    fs.appendFileSync("log.txt", `${date} ${title}\n`);
+    res.send();
+  } catch (e) {
+    console.log(e);
+    res.send(e);
+  }
 });
 
 export default logRouter;
