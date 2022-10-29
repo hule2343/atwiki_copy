@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import * as fs from "fs";
-
-const prisma = new PrismaClient();
 
 const logRouter = Router();
 
@@ -13,7 +10,7 @@ type Log = {
 };
 
 logRouter.get("/", async (req, res) => {
-  const log = await fs.readFile("log.txt", "utf-8", (err, text) => {
+  await fs.readFile("log.txt", "utf-8", (err, text) => {
     if (err) {
       console.log(err);
       res.send(err);
@@ -35,18 +32,6 @@ logRouter.get("/", async (req, res) => {
     }
     res.send(logJsonList);
   });
-});
-
-logRouter.get("/:id", async (req, res) => {
-  const { id } = req.params;
-
-  const log = await prisma.log.findFirst({
-    where: {
-      id: Number(id),
-    },
-  });
-
-  res.json(log);
 });
 
 logRouter.post("/log", async (req, res) => {

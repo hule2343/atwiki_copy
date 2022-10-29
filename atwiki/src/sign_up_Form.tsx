@@ -12,13 +12,6 @@ type UserForm = {
   is_student: boolean;
 };
 
-type Log = {
-  id: number;
-  url: string;
-  date: string;
-  title: string;
-};
-
 export const CreateUserForm = () => {
   const history = useNavigate();
 
@@ -56,12 +49,9 @@ export const CreateUserForm = () => {
   const leaveSingupLog = async (name: string) => {
     const now = new Date();
     const date = format(now, "yyyy/MM/dd");
-    const logData: Log = await axios.get("/logs");
-    const url = `http://localhost:3001/logs/${logData.id + 1}`;
     const title = `${name}さんがatwikiに登録されました`;
     await axios.post("/logs/log", {
       date: date,
-      url: url,
       title: title,
     });
     await axios.post(discordUrl, {

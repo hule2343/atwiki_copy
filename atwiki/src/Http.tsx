@@ -101,7 +101,7 @@ const EditForm = (props: { id: number }) => {
       .then((response) => {
         setInput((state) => ({
           ...state,
-          text: response.data.task,
+          text: response.data.task ? response.data.task : "",
         }));
         setLogData({
           name: response.data.name,

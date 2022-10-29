@@ -11,3 +11,6 @@
 2022/10/29 tanakaの進捗状況がtest7からtest8に変更
 2022/10/29 tanakaの進捗状況がtest8からtest9に変更
 2022/10/29 tanakaの進捗状況がtest9からtest10に変更
+2022/10/29 satouさんがatwikiに登録されました
+2022/10/29 satouの欠席予定日がnullから2022/11/05に変更
+2022/10/29 satouの進捗状況がnullからlogに変更
