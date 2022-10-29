@@ -1,12 +1,10 @@
-import React, { useContext, useEffect } from "react";
 import axiosBase from "axios";
 import { format } from "date-fns";
+import React, { useContext } from "react";
 import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { LoginForm } from "./login_Form";
 import { useNavigate } from "react-router";
-import { response } from "express";
 import { LoginContext, UserContext } from "./LoginContext";
 
 // モックサーバーのURL　db.json
@@ -124,20 +122,22 @@ const EditForm = (props: { id: number }) => {
       enable: !input.enable,
     }));
 
-    axios
-      .patch("/users/" + props.id, {
-        task: input.text,
-      })
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error);
-        }
-      });
-    leaveLog(logData.name, "進捗状況", logData.previousData, input.text);
-    setLogData((state) => ({ ...state, previousData: input.text }));
+    if (logData.previousData !== input.text) {
+      axios
+        .patch("/users/" + props.id, {
+          task: input.text,
+        })
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error);
+          }
+        });
+      leaveLog(logData.name, "進捗状況", logData.previousData, input.text);
+      setLogData((state) => ({ ...state, previousData: input.text }));
+    }
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -212,28 +212,30 @@ const EditDate = (props: { id: number }) => {
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     setDate((state) => ({ ...state, enable: !date.enable }));
-    axios
-      .patch("/users/" + props.id, {
-        date: date.date,
-      })
-      .then(() => {
-        setDate((state) => ({ ...state, date: date.date }));
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error);
-        }
-      });
-    leaveLog(
-      logData.name,
-      "欠席予定日",
-      logData.previousData,
-      date.date ? date.date : "none"
-    );
-    setLogData((state) => ({
-      ...state,
-      previousData: date.date ? date.date : "none",
-    }));
+    if (logData.previousData !== date.date) {
+      axios
+        .patch("/users/" + props.id, {
+          date: date.date,
+        })
+        .then(() => {
+          setDate((state) => ({ ...state, date: date.date }));
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error);
+          }
+        });
+      leaveLog(
+        logData.name,
+        "欠席予定日",
+        logData.previousData,
+        date.date ? date.date : "none"
+      );
+      setLogData((state) => ({
+        ...state,
+        previousData: date.date ? date.date : "none",
+      }));
+    }
   };
 
   const handleInput = (e: React.MouseEvent) => {
