@@ -1,1 +1,13 @@
 2022/10/29 tanakaの欠席予定日が2022/12/03から2022/12/10に変更
+2022/10/29 tanakaの欠席予定日が2022/12/10から2022/12/24に変更
+2022/10/29 tanakaの進捗状況がlogからtestに変更
+2022/10/29 tanakaの進捗状況がtestからtest1に変更
+2022/10/29 tanakaの進捗状況がtest1からtest2に変更
+2022/10/29 tanakaの進捗状況がtest2からtest3に変更
+2022/10/29 tanakaの進捗状況がtest3からtest4に変更
+2022/10/29 tanakaの進捗状況がtest4からtest5に変更
+2022/10/29 tanakaの進捗状況がtest5からtest6に変更
+2022/10/29 tanakaの進捗状況がtest6からtest7に変更
+2022/10/29 tanakaの進捗状況がtest7からtest8に変更
+2022/10/29 tanakaの進捗状況がtest8からtest9に変更
+2022/10/29 tanakaの進捗状況がtest9からtest10に変更

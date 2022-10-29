@@ -37,7 +37,6 @@ export type User = {
 
 type Log = {
   id: number;
-  url: string;
   date: string;
   title: string;
 };
@@ -370,7 +369,6 @@ export const Loglist: React.FC = () => {
     axios.get("/logs").then((response) => {
       console.log(response.data);
       setLog(response.data);
-      logId = response.data.length;
     });
   }, []);
 

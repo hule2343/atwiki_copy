@@ -6,10 +6,35 @@ const prisma = new PrismaClient();
 
 const logRouter = Router();
 
-logRouter.get("/", async (req, res) => {
-  const logs = await prisma.log.findMany();
+type Log = {
+  id: number;
+  date: string;
+  title: string;
+};
 
-  res.json(logs);
+logRouter.get("/", async (req, res) => {
+  const log = await fs.readFile("log.txt", "utf-8", (err, text) => {
+    if (err) {
+      console.log(err);
+      res.send(err);
+    }
+    const logList = text.split("\n");
+    const logLength = logList.length - 1; //最後の空行を含まない
+    const logJsonList: Log[] = [];
+    for (let i = 1; i <= 10; i++) {
+      if (logLength - i < 0) {
+        break;
+      } else {
+        const logLine = logList[logLength - i].split(" ");
+        logJsonList.push({
+          id: i,
+          date: logLine[0],
+          title: logLine[1],
+        });
+      }
+    }
+    res.send(logJsonList);
+  });
 });
 
 logRouter.get("/:id", async (req, res) => {
@@ -27,13 +52,13 @@ logRouter.get("/:id", async (req, res) => {
 logRouter.post("/log", async (req, res) => {
   const { date, title } = req.body;
 
-  try {
-    fs.appendFileSync("log.txt", `${date} ${title}\n`);
+  await fs.appendFile("log.txt", `${date} ${title}\n`, (err) => {
+    if (err) {
+      console.log(err);
+      res.send(err);
+    }
     res.send();
-  } catch (e) {
-    console.log(e);
-    res.send(e);
-  }
+  });
 });
 
 export default logRouter;
