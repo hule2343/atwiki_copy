@@ -22,11 +22,11 @@ logRouter.get("/", async (req, res) => {
       if (logLength - i < 0) {
         break;
       } else {
-        const logLine = logList[logLength - i].split(" ");
+        const date = logList[logLength - i].split(" ", 1)[0];
         logJsonList.push({
           id: i,
-          date: logLine[0],
-          title: logLine[1],
+          date: date.replace("_", " "),
+          title: logList[logLength - i].split(date + " ")[1],
         });
       }
     }

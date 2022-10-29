@@ -345,7 +345,7 @@ const leaveLog = (
   changedData: string
 ) => {
   let now = new Date();
-  let date = format(now, "yyyy/MM/dd");
+  let date = format(now, "yyyy/MM/dd_HH:mm:ss");
   const title = `${userName}の${type}が${previousData}から${changedData}に変更`;
   axios
     .post("/logs/log", {

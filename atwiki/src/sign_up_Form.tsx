@@ -48,7 +48,7 @@ export const CreateUserForm = () => {
 
   const leaveSingupLog = async (name: string) => {
     const now = new Date();
-    const date = format(now, "yyyy/MM/dd");
+    const date = format(now, "yyyy/MM/dd_HH:mm:ss");
     const title = `${name}さんがatwikiに登録されました`;
     await axios.post("/logs/log", {
       date: date,
