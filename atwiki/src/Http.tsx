@@ -8,6 +8,7 @@ import { LoginForm } from "./login_Form";
 import { useNavigate } from "react-router";
 import { response } from "express";
 import { LoginContext, UserContext } from "./LoginContext";
+import { Editable } from "./Editable";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -44,12 +45,12 @@ type Log = {
   title: string;
 };
 
-type PreviousLogData = {
+export type PreviousLogData = {
   name: string;
   previousData: string;
 };
 
-type Form = {
+export type Form = {
   id: number;
   text: string;
   enable: boolean;
@@ -66,7 +67,7 @@ type TabelCellType = {
   onClick: (e: React.MouseEvent) => void;
 };
 
-const TableCell = (props: TabelCellType) => {
+export const TableCell = (props: TabelCellType) => {
   return (
     <div className="container">
       <div className="row">
@@ -415,7 +416,7 @@ export const MemberList: React.FC = () => {
                 <EditDate id={student.id} />
               </td>
               <td>
-                <EditForm id={student.id} />
+                <Editable id={student.id} data={"task"} />
               </td>
             </tr>
           ))}
@@ -427,13 +428,21 @@ export const MemberList: React.FC = () => {
           <tr>
             <th>名前</th>
             <th>連絡</th>
+            <th>電話番号</th>
           </tr>
         </thead>
         <tbody>
           {members.map((member) => (
             <tr key={member.id}>
-              <td>{member.name}</td>
-              <td>{member.email}</td>
+              <td>
+                <Editable id={member.id} data={"name"} />
+              </td>
+              <td>
+                <Editable id={member.id} data={"email"} />
+              </td>
+              <td>
+                <Editable id={member.id} data={"phonenumber"} />
+              </td>
             </tr>
           ))}
         </tbody>
