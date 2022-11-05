@@ -60,7 +60,7 @@ type DayForm = {
 
 type EditProps = {
   id: number;
-  setLog: React.Dispatch<React.SetStateAction<Log[]>>;
+  setLog: () => void;
 };
 
 type TabelCellType = {
@@ -118,13 +118,6 @@ const EditForm = (props: EditProps) => {
       });
   }, [props.id]);
 
-  React.useEffect(() => {
-    axios.get("/logs").then((response) => {
-      console.log(response.data);
-      props.setLog(response.data);
-    });
-  }, [logData]);
-
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     setInput((state) => ({
@@ -146,7 +139,13 @@ const EditForm = (props: EditProps) => {
             console.log(error);
           }
         });
-      leaveLog(logData.name, "進捗状況", logData.previousData, input.text);
+      leaveLog(
+        logData.name,
+        "進捗状況",
+        logData.previousData,
+        input.text,
+        props.setLog
+      );
       setLogData((state) => ({ ...state, previousData: input.text }));
     }
   };
@@ -240,7 +239,8 @@ const EditDate = (props: EditProps) => {
         logData.name,
         "欠席予定日",
         logData.previousData,
-        date.date ? date.date : "none"
+        date.date ? date.date : "none",
+        props.setLog
       );
       setLogData((state) => ({
         ...state,
@@ -248,13 +248,6 @@ const EditDate = (props: EditProps) => {
       }));
     }
   };
-
-  React.useEffect(() => {
-    axios.get("/logs").then((response) => {
-      console.log(response.data);
-      props.setLog(response.data);
-    });
-  }, [logData]);
 
   const handleInput = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -305,13 +298,25 @@ export const MemberList: React.FC = () => {
 
   React.useEffect(() => {
     axios.get("/users").then((response) => {
+      console.log(response.data);
       setMembers(response.data);
+    });
+    axios.get("/logs").then((response) => {
+      console.log(response.data);
+      setLog(response.data);
     });
   }, []);
 
   const students = members.filter((members) => {
     return members.is_student === true;
   });
+
+  const logSetter = () => {
+    axios.get("/logs").then((response) => {
+      console.log(response.data);
+      setLog(response.data);
+    });
+  };
 
   return (
     <div className="p-4">
@@ -328,10 +333,10 @@ export const MemberList: React.FC = () => {
             <tr key={student.id}>
               <td>{student.name}</td>
               <td>
-                <EditDate id={student.id} setLog={setLog} />
+                <EditDate id={student.id} setLog={logSetter} />
               </td>
               <td>
-                <EditForm id={student.id} setLog={setLog} />
+                <EditForm id={student.id} setLog={logSetter} />
               </td>
             </tr>
           ))}
@@ -359,28 +364,24 @@ export const MemberList: React.FC = () => {
   );
 };
 
-const leaveLog = (
+const leaveLog = async (
   userName: string,
   type: string,
   previousData: string,
-  changedData: string
+  changedData: string,
+  setLog: () => void
 ) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd_HH:mm:ss");
   const title = `${userName}の${type}が${previousData}から${changedData}に変更`;
-  axios
-    .post("/logs/log", {
-      date: date,
-      title: title,
-    })
-    .then(() => {
-      axios.post(discordUrl, {
-        content: `${title}`,
-      });
-    })
-    .catch((error: Error) => {
-      console.log(error.message);
-    });
+  await axios.post("/logs/log", {
+    date: date,
+    title: title,
+  });
+  setLog();
+  await axios.post(discordUrl, {
+    content: `${title}`,
+  });
 };
 
 export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
