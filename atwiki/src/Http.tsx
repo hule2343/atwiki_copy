@@ -58,6 +58,11 @@ type DayForm = {
   enable: boolean;
 };
 
+type EditProps = {
+  id: number;
+  setLog: React.Dispatch<React.SetStateAction<Log[]>>;
+};
+
 type TabelCellType = {
   cellvalue: string | undefined;
   onClick: (e: React.MouseEvent) => void;
@@ -81,7 +86,7 @@ const TableCell = (props: TabelCellType) => {
   );
 };
 
-const EditForm = (props: { id: number }) => {
+const EditForm = (props: EditProps) => {
   const { loginUser, setUser } = useContext(UserContext);
 
   axios.get(`/users/${props.id}`);
@@ -112,6 +117,13 @@ const EditForm = (props: { id: number }) => {
         console.log(error);
       });
   }, [props.id]);
+
+  React.useEffect(() => {
+    axios.get("/logs").then((response) => {
+      console.log(response.data);
+      props.setLog(response.data);
+    });
+  }, [logData]);
 
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -183,7 +195,7 @@ const EditForm = (props: { id: number }) => {
   );
 };
 
-const EditDate = (props: { id: number }) => {
+const EditDate = (props: EditProps) => {
   const { loginUser, setUser } = useContext(UserContext);
 
   const [date, setDate] = React.useState<DayForm>({
@@ -237,6 +249,13 @@ const EditDate = (props: { id: number }) => {
     }
   };
 
+  React.useEffect(() => {
+    axios.get("/logs").then((response) => {
+      console.log(response.data);
+      props.setLog(response.data);
+    });
+  }, [logData]);
+
   const handleInput = (e: React.MouseEvent) => {
     e.preventDefault();
     setDate((state) => ({ ...state, enable: !date.enable }));
@@ -282,6 +301,7 @@ const EditDate = (props: { id: number }) => {
 
 export const MemberList: React.FC = () => {
   const [members, setMembers] = React.useState<User[]>([]);
+  const [logs, setLog] = React.useState<Log[]>([]);
 
   React.useEffect(() => {
     axios.get("/users").then((response) => {
@@ -308,10 +328,10 @@ export const MemberList: React.FC = () => {
             <tr key={student.id}>
               <td>{student.name}</td>
               <td>
-                <EditDate id={student.id} />
+                <EditDate id={student.id} setLog={setLog} />
               </td>
               <td>
-                <EditForm id={student.id} />
+                <EditForm id={student.id} setLog={setLog} />
               </td>
             </tr>
           ))}
@@ -334,6 +354,7 @@ export const MemberList: React.FC = () => {
           ))}
         </tbody>
       </table>
+      <Loglist logs={logs} />
     </div>
   );
 };
@@ -362,16 +383,7 @@ const leaveLog = (
     });
 };
 
-export const Loglist: React.FC = () => {
-  const [logs, setLog] = React.useState<Log[]>([]);
-
-  React.useEffect(() => {
-    axios.get("/logs").then((response) => {
-      console.log(response.data);
-      setLog(response.data);
-    });
-  }, []);
-
+export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
   return (
     <div className="ps-4 pb-4">
       <h3>更新履歴</h3>
@@ -432,9 +444,6 @@ export const Home: React.FC = () => {
       </div>
       <div>
         <MemberList />
-      </div>
-      <div>
-        <Loglist />
       </div>
     </div>
   );
