@@ -4,6 +4,7 @@ import React, { useContext } from "react";
 import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { LoginContext, UserContext } from "./LoginContext";
 
@@ -61,6 +62,7 @@ type DayForm = {
 type EditProps = {
   id: number;
   setLog: () => void;
+  notify: (status: string) => void;
 };
 
 type TabelCellType = {
@@ -144,7 +146,8 @@ const EditForm = (props: EditProps) => {
         "進捗状況",
         logData.previousData,
         input.text,
-        props.setLog
+        props.setLog,
+        props.notify
       );
       setLogData((state) => ({ ...state, previousData: input.text }));
     }
@@ -160,6 +163,7 @@ const EditForm = (props: EditProps) => {
 
   return loginUser.id === props.id ? (
     <div>
+      <Toaster position="top-right" />
       <form>
         {input.enable ? (
           <div className="container">
@@ -240,7 +244,8 @@ const EditDate = (props: EditProps) => {
         "欠席予定日",
         logData.previousData,
         date.date ? date.date : "none",
-        props.setLog
+        props.setLog,
+        props.notify
       );
       setLogData((state) => ({
         ...state,
@@ -318,8 +323,17 @@ export const MemberList: React.FC = () => {
     });
   };
 
+  const notify = (status: string) => {
+    if (status === "error") {
+      toast.error("エラーが発生しました");
+    } else if (status === "success") {
+      toast.success("保存しました");
+    }
+  };
+
   return (
     <div className="p-4">
+      <Toaster position="top-right" />
       <table className="table table-hover table-bordered align-middle w-auto">
         <thead className="table-light">
           <tr>
@@ -333,10 +347,18 @@ export const MemberList: React.FC = () => {
             <tr key={student.id}>
               <td>{student.name}</td>
               <td>
-                <EditDate id={student.id} setLog={logSetter} />
+                <EditDate
+                  id={student.id}
+                  setLog={logSetter}
+                  notify={(status) => notify(status)}
+                />
               </td>
               <td>
-                <EditForm id={student.id} setLog={logSetter} />
+                <EditForm
+                  id={student.id}
+                  setLog={logSetter}
+                  notify={(status) => notify(status)}
+                />
               </td>
             </tr>
           ))}
@@ -364,24 +386,35 @@ export const MemberList: React.FC = () => {
   );
 };
 
-const leaveLog = async (
+const leaveLog = (
   userName: string,
   type: string,
   previousData: string,
   changedData: string,
-  setLog: () => void
+  setLog: () => void,
+  notify: (status: string) => void
 ) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd_HH:mm:ss");
   const title = `${userName}の${type}が${previousData}から${changedData}に変更`;
-  await axios.post("/logs/log", {
-    date: date,
-    title: title,
-  });
-  setLog();
-  await axios.post(discordUrl, {
-    content: `${title}`,
-  });
+  axios
+    .post("/logs/log", {
+      date: date,
+      title: title,
+    })
+    .then(() => {
+      setLog();
+      notify("success");
+      axios.post(discordUrl, {
+        content: `${title}`,
+      });
+    })
+    .catch((err) => {
+      if (err) {
+        console.log(err);
+        notify("error");
+      }
+    });
 };
 
 export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
