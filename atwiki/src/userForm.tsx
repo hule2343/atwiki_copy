@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { axios, discordUrl } from "./Http";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 
 type UserFormType = {
   onSubmit: (data: UserForm) => void;
@@ -34,6 +36,14 @@ export const CreateUserForm: React.FC<UserFormType> = (props) => {
   const onSubmit = props.onSubmit;
 
   const handleIs_student = props.handleIs_studnet;
+
+  const [shown, setPasswordShown] = useState(false);
+
+  const togglePasswordVisiblity = () => {
+    setPasswordShown(!shown);
+  };
+
+  const eye = <FontAwesomeIcon icon={faEye} />;
 
   return (
     <div>
@@ -77,8 +87,10 @@ export const CreateUserForm: React.FC<UserFormType> = (props) => {
           <input
             id="password"
             className="form-control w-auto"
+            type={shown ? "text" : "password"}
             {...register("password", { required: true })}
           />
+          <i onClick={togglePasswordVisiblity}>{eye}</i>
         </div>
         <div className="mt-2">
           <input
