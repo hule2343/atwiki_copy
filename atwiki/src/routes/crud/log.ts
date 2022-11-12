@@ -13,7 +13,7 @@ logRouter.get("/", async (req, res) => {
   await fs.readFile("log.txt", "utf-8", (err, text) => {
     if (err) {
       console.log(err);
-      res.send(err);
+      return res.send(err);
     }
     const logList = text.split("\n");
     const logLength = logList.length - 1; //最後の空行を含まない
@@ -30,19 +30,32 @@ logRouter.get("/", async (req, res) => {
         });
       }
     }
-    res.send(logJsonList);
+    return res.send(logJsonList);
   });
 });
 
 logRouter.post("/log", async (req, res) => {
   const { date, title } = req.body;
 
-  await fs.appendFile("log.txt", `${date} ${title}\n`, (err) => {
+  await fs.readFile("log.txt", "utf-8", (err, text) => {
     if (err) {
       console.log(err);
-      res.send(err);
+      return res.send(err);
     }
-    res.send();
+    const logList = text.split("\n");
+    logList.pop(); //空行の要素削除
+    logList.push(`${date} ${title}\n`);
+    const logLength = logList.length;
+    if (logLength > 10) {
+      logList.shift();
+    }
+    fs.writeFile("log.txt", logList.join("\n"), (err) => {
+      if (err) {
+        console.log(err);
+        return res.send(err);
+      }
+      return res.send();
+    });
   });
 });
 
