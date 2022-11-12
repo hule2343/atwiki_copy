@@ -20,11 +20,6 @@ root.render(
                 <div className="container-fluid">
                   <ul className="navbar-nav d-flex flex-row">
                     <li className="nav-item me-4">
-                      <NavLink className={"nav-link"} to="/login">
-                        Login
-                      </NavLink>
-                    </li>
-                    <li className="nav-item me-4">
                       <NavLink className={"nav-link"} to="/register">
                         Sign up
                       </NavLink>

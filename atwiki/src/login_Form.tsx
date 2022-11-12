@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./LoginContext";
 import { LoginSetContext } from "./LoginContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 
 type loginForm = {
   username: string;
@@ -22,6 +24,14 @@ export const LoginForm = () => {
   const { loginUser, setUser } = useContext(UserContext);
 
   const [error, setError] = useState<string>("");
+
+  const [shown, setPasswordShown] = useState(false);
+
+  const eye = <FontAwesomeIcon icon={faEye} />;
+
+  const togglePasswordVisiblity = () => {
+    setPasswordShown(!shown);
+  };
 
   const onSubmit = (data: loginForm): void => {
     axios
@@ -49,6 +59,7 @@ export const LoginForm = () => {
         setError("ログインに失敗しました");
         console.log(error);
         if (error.response) {
+          console.log(error.response);
         }
       });
   };
@@ -74,9 +85,13 @@ export const LoginForm = () => {
           <input
             id="password"
             className="form-control w-auto"
-            {...register("password", { required: true })}
+            type={shown ? "text" : "password"}
+            {...register("password", {
+              required: "パスワードを入力してください",
+            })}
           />
-          {errors.password && <div>必須項目です</div>}
+          <i onClick={togglePasswordVisiblity}>{eye}</i>
+          {errors.password && errors.password.message}{" "}
         </div>
         <button type="submit" className="btn btn-outline-primary mt-2">
           Login
