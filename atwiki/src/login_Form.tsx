@@ -1,9 +1,8 @@
-import React, { useContext, useState } from "react";
-import { axios } from "./Http";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "./LoginContext";
-import { LoginSetContext } from "./LoginContext";
+import { axios } from "./Http";
+import { LoginSetContext, UserContext } from "./LoginContext";
 
 type loginForm = {
   username: string;
@@ -54,35 +53,44 @@ export const LoginForm = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="ms-3">
-        <div>
-          <label htmlFor="name" className="form-label">
-            名前
-          </label>
-          <input
-            id="name"
-            className="form-control w-auto"
-            {...register("username", { required: true })}
-          />
-          {errors.username && <div>必須項目です</div>}
-        </div>
-        <div className="mt-2">
-          <label htmlFor="password" className="form-label">
-            パスワード
-          </label>
-          <input
-            id="password"
-            className="form-control w-auto"
-            {...register("password", { required: true })}
-          />
-          {errors.password && <div>必須項目です</div>}
-        </div>
-        <button type="submit" className="btn btn-outline-primary mt-2">
-          Login
-        </button>
-      </form>
-      <p>{error}</p>
+    <div className="container">
+      <div className="row justify-content-center mt-3">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="col-auto align-self-center border border-2 rounded-3 p-5"
+        >
+          <h1 className="mb-5 fw-bold">Login</h1>
+          <div>
+            <label htmlFor="name" className="form-label">
+              名前
+            </label>
+            <input
+              id="name"
+              className="form-control"
+              {...register("username", { required: true })}
+            />
+            {errors.username && <div>必須項目です</div>}
+          </div>
+          <div className="mt-2">
+            <label htmlFor="password" className="form-label">
+              パスワード
+            </label>
+            <input
+              id="password"
+              className="form-control"
+              {...register("password", { required: true })}
+            />
+            {errors.password && <div>必須項目です</div>}
+          </div>
+          <button
+            type="submit"
+            className="btn btn-outline-primary text-align-left mt-3"
+          >
+            Login
+          </button>
+        </form>
+        <p>{error}</p>
+      </div>
     </div>
   );
 };
