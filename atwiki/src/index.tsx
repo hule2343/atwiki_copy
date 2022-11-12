@@ -19,6 +19,15 @@ root.render(
               <nav className="navbar navbar-expand-mg navbar-light bg-light">
                 <div className="container-fluid">
                   <ul className="navbar-nav d-flex flex-row">
+                    {localStorage.getItem("loginuser") ? (
+                      <></>
+                    ) : (
+                      <li className="nav-item me-4">
+                        <NavLink className={"nav-link"} to="/login">
+                          Login
+                        </NavLink>
+                      </li>
+                    )}
                     <li className="nav-item me-4">
                       <NavLink className={"nav-link"} to="/register">
                         Sign up
