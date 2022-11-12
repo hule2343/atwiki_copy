@@ -61,62 +61,68 @@ export const CreateUserForm = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="ms-3">
-        <div className="mt-2">
-          <label htmlFor="name" className="form-label">
-            名前
-          </label>
-          <input
-            id="name"
-            className="form-control w-auto"
-            {...register("name", { required: true })}
-          />
-          {errors.name && <div>必須項目です</div>}
-        </div>
-        <div className="mt-2">
-          <label htmlFor="email" className="form-label">
-            メールアドレス
-          </label>
-          <input
-            id="email"
-            className="form-control w-auto"
-            {...register("email", { required: true })}
-          />
-          {errors.name && <div>必須項目です</div>}
-        </div>
-        <div className="mt-2">
-          <label htmlFor="phonenumber" className="form-label">
-            電話番号
-          </label>
-          <input
-            id="phonenumber"
-            className="form-control w-auto"
-            {...register("phonenumber")}
-          />
-        </div>
-        <div className="mt-2">
-          <label htmlFor="password" className="form-label">
-            パスワード
-          </label>
-          <input
-            id="password"
-            className="form-control w-auto"
-            {...register("password", { required: true })}
-          />
-        </div>
-        <div className="mt-2">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            onChange={handleIs_student}
-          />
-          <label className="form-check-label ms-2">学生</label>
-        </div>
-        <button type="submit" className="btn btn-outline-primary mt-2">
-          Sign up
-        </button>
-      </form>
+    <div className="container">
+      <div className="row justify-content-center mt-3">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="col-4 align-self-center border border-2 rounded-3 p-5"
+        >
+          <h1 className="mb-5 fw-bold">Sign up</h1>
+          <div className="mt-2">
+            <label htmlFor="name" className="form-label">
+              名前
+            </label>
+            <input
+              id="name"
+              className="form-control"
+              {...register("name", { required: true })}
+            />
+            {errors.name && <div className="text-danger">必須項目です</div>}
+          </div>
+          <div className="mt-2">
+            <label htmlFor="email" className="form-label">
+              メールアドレス
+            </label>
+            <input
+              id="email"
+              className="form-control"
+              {...register("email", { required: true })}
+            />
+            {errors.name && <div className="text-danger">必須項目です</div>}
+          </div>
+          <div className="mt-2">
+            <label htmlFor="phonenumber" className="form-label">
+              電話番号
+            </label>
+            <input
+              id="phonenumber"
+              className="form-control"
+              {...register("phonenumber")}
+            />
+          </div>
+          <div className="mt-2">
+            <label htmlFor="password" className="form-label">
+              パスワード
+            </label>
+            <input
+              id="password"
+              className="form-control"
+              {...register("password", { required: true })}
+            />
+          </div>
+          <div className="mt-2">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              onChange={handleIs_student}
+            />
+            <label className="form-check-label ms-2">学生</label>
+          </div>
+          <button type="submit" className="btn btn-outline-primary mt-3">
+            Sign up
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

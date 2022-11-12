@@ -57,7 +57,7 @@ export const LoginForm = () => {
       <div className="row justify-content-center mt-3">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="col-auto align-self-center border border-2 rounded-3 p-5"
+          className="col-4 align-self-center border border-2 rounded-3 p-5"
         >
           <h1 className="mb-5 fw-bold">Login</h1>
           <div>
