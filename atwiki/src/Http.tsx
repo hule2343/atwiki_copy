@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import "./Http.css";
 import { LoginContext, UserContext } from "./LoginContext";
 
 // モックサーバーのURL　db.json
@@ -329,42 +330,46 @@ export const MemberList: React.FC = () => {
       <Toaster position="top-right" />
       <div className="row justify-content-center">
         <div className="col-8 mb-3">
-          <h2 className="mb-1">欠席予定と進捗状況</h2>
-          <table className="table table-hover table-bordered align-middle">
-            <thead className="table-light">
-              <tr>
-                <th>名前</th>
-                <th>欠席予定</th>
-                <th>進捗状況</th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student) => (
-                <tr key={student.id}>
-                  <td>{student.name}</td>
-                  <td>
-                    <EditDate
-                      id={student.id}
-                      setLog={logSetter}
-                      notify={(status) => notify(status)}
-                    />
-                  </td>
-                  <td>
-                    <EditForm
-                      id={student.id}
-                      setLog={logSetter}
-                      notify={(status) => notify(status)}
-                    />
-                  </td>
+          <h2 className="mb-2 headline">欠席予定と進捗状況</h2>
+          <div className="ps-2">
+            <table className="table table-hover table-bordered align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th>名前</th>
+                  <th>欠席予定</th>
+                  <th>進捗状況</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {students.map((student) => (
+                  <tr key={student.id}>
+                    <td>{student.name}</td>
+                    <td>
+                      <EditDate
+                        id={student.id}
+                        setLog={logSetter}
+                        notify={(status) => notify(status)}
+                      />
+                    </td>
+                    <td>
+                      <EditForm
+                        id={student.id}
+                        setLog={logSetter}
+                        notify={(status) => notify(status)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
 
-        <div className="row justify-content-center">
-          <div className="col-8 mb-3">
-            <h2 className="mb-1">連絡先</h2>
+      <div className="row justify-content-center">
+        <div className="col-8 mb-3">
+          <h2 className="mb-2 headline">連絡先</h2>
+          <div className="ps-2">
             <table className="table table-bordered align-middle">
               <thead className="table-light">
                 <tr>
@@ -382,8 +387,8 @@ export const MemberList: React.FC = () => {
               </tbody>
             </table>
           </div>
-          <Loglist logs={logs} />
         </div>
+        <Loglist logs={logs} />
       </div>
     </div>
   );
@@ -425,8 +430,8 @@ export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-8">
-          <h2 className="mb-1">更新履歴</h2>
-          <Accordion>
+          <h2 className="mb-2 headline">更新履歴</h2>
+          <Accordion className="ms-2">
             {logs.map((log) => (
               <div key={log.id}>
                 <Accordion.Item eventKey={log.id.toString()}>
@@ -446,9 +451,11 @@ const TestUserInfo: React.FC = () => {
   const { loginUser, setUser } = useContext(UserContext);
 
   return (
-    <div className="list-unstyled mx-2">
-      <li>{loginUser.name}</li>
-      <li>{loginUser.email}</li>
+    <div className="mx-2">
+      <ul className="list-unstyled ms-3">
+        <li>{loginUser.name}</li>
+        <li>{loginUser.email}</li>
+      </ul>
     </div>
   );
 };
@@ -478,7 +485,7 @@ export const Home: React.FC = () => {
   return (
     <div className="container m-0">
       <div className="row">
-        <div className="col-auto border-end">
+        <div className="col-auto border-end bg-light">
           <div className="sticky-top">
             <button
               onClick={handleLogout}
