@@ -54,10 +54,10 @@ export const LoginForm = () => {
 
   return (
     <div className="container">
-      <div className="row justify-content-center mt-3">
+      <div className="row justify-content-center mt-5">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="col-4 align-self-center border border-2 rounded-3 p-5"
+          className="col-4 border border-2 rounded-3 shadow p-5"
         >
           <h1 className="mb-5 fw-bold">Login</h1>
           <div>
@@ -69,7 +69,7 @@ export const LoginForm = () => {
               className="form-control"
               {...register("username", { required: true })}
             />
-            {errors.username && <div>必須項目です</div>}
+            {errors.username && <div className="text-danger">必須項目です</div>}
           </div>
           <div className="mt-2">
             <label htmlFor="password" className="form-label">
@@ -80,16 +80,15 @@ export const LoginForm = () => {
               className="form-control"
               {...register("password", { required: true })}
             />
-            {errors.password && <div>必須項目です</div>}
+            {errors.password && <div className="text-danger">必須項目です</div>}
           </div>
-          <button
-            type="submit"
-            className="btn btn-outline-primary text-align-left mt-3"
-          >
-            Login
-          </button>
+          <div className="d-flex align-items-center justify-content-between mt-3">
+            <button type="submit" className="btn btn-outline-primary">
+              Login
+            </button>
+            <span className="form-text text-danger me-2">{error}</span>
+          </div>
         </form>
-        <p>{error}</p>
       </div>
     </div>
   );

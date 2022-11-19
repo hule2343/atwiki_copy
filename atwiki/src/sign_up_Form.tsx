@@ -62,10 +62,10 @@ export const CreateUserForm = () => {
 
   return (
     <div className="container">
-      <div className="row justify-content-center mt-3">
+      <div className="row justify-content-center mt-5">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="col-4 align-self-center border border-2 rounded-3 p-5"
+          className="col-4 align-self-center border border-2 rounded-3 shadow p-5"
         >
           <h1 className="mb-5 fw-bold">Sign up</h1>
           <div className="mt-2">

@@ -177,7 +177,7 @@ const EditForm = (props: EditProps) => {
                 className="col-auto me-3"
               />
               <button
-                className="btn btn-outline-secondary col-auto"
+                className="btn btn-outline-primary col-auto"
                 onClick={handleSubmit}
               >
                 保存
@@ -332,56 +332,60 @@ export const MemberList: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="container p-4">
       <Toaster position="top-right" />
-      <table className="table table-hover table-bordered align-middle w-auto">
-        <thead className="table-light">
-          <tr>
-            <th>名前</th>
-            <th>欠席予定</th>
-            <th>進捗状況</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student) => (
-            <tr key={student.id}>
-              <td>{student.name}</td>
-              <td>
-                <EditDate
-                  id={student.id}
-                  setLog={logSetter}
-                  notify={(status) => notify(status)}
-                />
-              </td>
-              <td>
-                <EditForm
-                  id={student.id}
-                  setLog={logSetter}
-                  notify={(status) => notify(status)}
-                />
-              </td>
+      <div className="row justify-content-center">
+        <table className="table table-hover table-bordered align-middle w-auto col-6">
+          <thead className="table-light">
+            <tr>
+              <th>名前</th>
+              <th>欠席予定</th>
+              <th>進捗状況</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr key={student.id}>
+                <td>{student.name}</td>
+                <td>
+                  <EditDate
+                    id={student.id}
+                    setLog={logSetter}
+                    notify={(status) => notify(status)}
+                  />
+                </td>
+                <td>
+                  <EditForm
+                    id={student.id}
+                    setLog={logSetter}
+                    notify={(status) => notify(status)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-      <table className="table table-bordered align-middle w-auto">
-        <thead className="table-light">
-          <tr>
-            <th>名前</th>
-            <th>連絡</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((member) => (
-            <tr key={member.id}>
-              <td>{member.name}</td>
-              <td>{member.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <Loglist logs={logs} />
+        <div className="row justify-content-center">
+          <table className="table table-bordered align-middle w-auto col-6">
+            <thead className="table-light">
+              <tr>
+                <th>名前</th>
+                <th>連絡</th>
+              </tr>
+            </thead>
+            <tbody>
+              {members.map((member) => (
+                <tr key={member.id}>
+                  <td>{member.name}</td>
+                  <td>{member.email}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Loglist logs={logs} />
+        </div>
+      </div>
     </div>
   );
 };
@@ -419,19 +423,21 @@ const leaveLog = (
 
 export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
   return (
-    <div className="ps-4 pb-4">
-      <h3>更新履歴</h3>
-      <div className="w-50">
-        <Accordion>
-          {logs.map((log) => (
-            <div key={log.id}>
-              <Accordion.Item eventKey={log.id.toString()}>
-                <Accordion.Header>{log.date}</Accordion.Header>
-                <Accordion.Body>{log.title}</Accordion.Body>
-              </Accordion.Item>
-            </div>
-          ))}
-        </Accordion>
+    <div className="container">
+      <div className="row justify-content-center">
+        <div className="col-6">
+          <h2>更新履歴</h2>
+          <Accordion>
+            {logs.map((log) => (
+              <div key={log.id}>
+                <Accordion.Item eventKey={log.id.toString()}>
+                  <Accordion.Header>{log.date}</Accordion.Header>
+                  <Accordion.Body>{log.title}</Accordion.Body>
+                </Accordion.Item>
+              </div>
+            ))}
+          </Accordion>
+        </div>
       </div>
     </div>
   );
@@ -441,7 +447,7 @@ const TestUserInfo: React.FC = () => {
   const { loginUser, setUser } = useContext(UserContext);
 
   return (
-    <div>
+    <div className="list-unstyled mx-2">
       <li>{loginUser.name}</li>
       <li>{loginUser.email}</li>
     </div>
@@ -472,7 +478,12 @@ export const Home: React.FC = () => {
 
   return (
     <div>
-      <button onClick={handleLogout}>アカウント切り替え</button>
+      <button
+        onClick={handleLogout}
+        className="btn btn-outline-secondary btn-sm m-2"
+      >
+        アカウント切り替え
+      </button>
       <div>
         <TestUserInfo />
       </div>
