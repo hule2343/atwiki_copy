@@ -335,54 +335,60 @@ export const MemberList: React.FC = () => {
     <div className="container p-4">
       <Toaster position="top-right" />
       <div className="row justify-content-center">
-        <table className="table table-hover table-bordered align-middle w-auto col-6">
-          <thead className="table-light">
-            <tr>
-              <th>名前</th>
-              <th>欠席予定</th>
-              <th>進捗状況</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((student) => (
-              <tr key={student.id}>
-                <td>{student.name}</td>
-                <td>
-                  <EditDate
-                    id={student.id}
-                    setLog={logSetter}
-                    notify={(status) => notify(status)}
-                  />
-                </td>
-                <td>
-                  <EditForm
-                    id={student.id}
-                    setLog={logSetter}
-                    notify={(status) => notify(status)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="row justify-content-center">
-          <table className="table table-bordered align-middle w-auto col-6">
+        <div className="col-8 align-middle mb-3">
+          <h2 className="mb-1">欠席予定と進捗状況</h2>
+          <table className="table table-hover table-bordered">
             <thead className="table-light">
               <tr>
                 <th>名前</th>
-                <th>連絡</th>
+                <th>欠席予定</th>
+                <th>進捗状況</th>
               </tr>
             </thead>
             <tbody>
-              {members.map((member) => (
-                <tr key={member.id}>
-                  <td>{member.name}</td>
-                  <td>{member.email}</td>
+              {students.map((student) => (
+                <tr key={student.id}>
+                  <td>{student.name}</td>
+                  <td>
+                    <EditDate
+                      id={student.id}
+                      setLog={logSetter}
+                      notify={(status) => notify(status)}
+                    />
+                  </td>
+                  <td>
+                    <EditForm
+                      id={student.id}
+                      setLog={logSetter}
+                      notify={(status) => notify(status)}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        <div className="row justify-content-center">
+          <div className="col-8 align-middle mb-3">
+            <h2 className="mb-1">連絡先</h2>
+            <table className="table table-bordered">
+              <thead className="table-light">
+                <tr>
+                  <th>名前</th>
+                  <th>連絡</th>
+                </tr>
+              </thead>
+              <tbody>
+                {members.map((member) => (
+                  <tr key={member.id}>
+                    <td>{member.name}</td>
+                    <td>{member.email}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <Loglist logs={logs} />
         </div>
       </div>
@@ -425,8 +431,8 @@ export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
   return (
     <div className="container">
       <div className="row justify-content-center">
-        <div className="col-6">
-          <h2>更新履歴</h2>
+        <div className="col-8">
+          <h2 className="mb-1">更新履歴</h2>
           <Accordion>
             {logs.map((log) => (
               <div key={log.id}>
@@ -477,18 +483,24 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div>
-      <button
-        onClick={handleLogout}
-        className="btn btn-outline-secondary btn-sm m-2"
-      >
-        アカウント切り替え
-      </button>
-      <div>
-        <TestUserInfo />
-      </div>
-      <div>
-        <MemberList />
+    <div className="container m-0">
+      <div className="row">
+        <div className="col-auto border-end">
+          <div className="sticky-top">
+            <button
+              onClick={handleLogout}
+              className="btn btn-outline-secondary btn-sm m-2"
+            >
+              アカウント切り替え
+            </button>
+            <div>
+              <TestUserInfo />
+            </div>
+          </div>
+        </div>
+        <div className="col">
+          <MemberList />
+        </div>
       </div>
     </div>
   );
