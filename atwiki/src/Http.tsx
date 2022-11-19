@@ -72,18 +72,14 @@ type TabelCellType = {
 
 const TableCell = (props: TabelCellType) => {
   return (
-    <div className="container">
-      <div className="row">
-        <span className="col-auto me-auto d-flex align-items-center">
-          {props.cellvalue}
-        </span>
-        <button
-          className="btn btn-outline-primary col-auto"
-          onClick={props.onClick}
-        >
-          編集
-        </button>
-      </div>
+    <div className="d-flex align-items-center justify-content-between">
+      <span className="me-2">{props.cellvalue}</span>
+      <button
+        className="btn btn-outline-primary text-nowrap"
+        onClick={props.onClick}
+      >
+        編集
+      </button>
     </div>
   );
 };
@@ -163,26 +159,23 @@ const EditForm = (props: EditProps) => {
 
   return loginUser.id === props.id ? (
     <div>
-      <Toaster position="top-right" />
       <form>
         {input.enable ? (
-          <div className="container">
-            <div className="row">
-              <input
-                onChange={(e) => {
-                  setInput((state) => ({ ...state, text: e.target.value }));
-                }}
-                type="text"
-                value={input.text}
-                className="col-auto me-3"
-              />
-              <button
-                className="btn btn-outline-primary col-auto"
-                onClick={handleSubmit}
-              >
-                保存
-              </button>
-            </div>
+          <div className="d-flex align-items-center justify-content-between">
+            <input
+              onChange={(e) => {
+                setInput((state) => ({ ...state, text: e.target.value }));
+              }}
+              type="text"
+              value={input.text}
+              className="form-control me-2"
+            />
+            <button
+              className="btn btn-outline-primary text-nowrap"
+              onClick={handleSubmit}
+            >
+              保存
+            </button>
           </div>
         ) : (
           <>
@@ -269,21 +262,21 @@ const EditDate = (props: EditProps) => {
     <div>
       <form>
         {date.enable ? (
-          <div className="container">
-            <div className="row">
-              <label>
-                <i className="calendar alternate outline icon"></i>
-              </label>
-              <div className="d-flex align-items-center col-auto me-auto">
-                <DatePicker selected={selectDate} onChange={handleChange} />
-              </div>
-              <button
-                className="btn btn-outline-primary col-auto"
-                onClick={handleSubmit}
-              >
-                保存
-              </button>
-            </div>
+          <div className="d-flex align-items-center">
+            <label>
+              <i className="calendar alternate outline icon"></i>
+            </label>
+            <DatePicker
+              selected={selectDate}
+              onChange={handleChange}
+              className="form-control me-auto"
+            />
+            <button
+              className="btn btn-outline-primary text-nowrap ms-2"
+              onClick={handleSubmit}
+            >
+              保存
+            </button>
           </div>
         ) : (
           <>
@@ -335,9 +328,9 @@ export const MemberList: React.FC = () => {
     <div className="container p-4">
       <Toaster position="top-right" />
       <div className="row justify-content-center">
-        <div className="col-8 align-middle mb-3">
+        <div className="col-8 mb-3">
           <h2 className="mb-1">欠席予定と進捗状況</h2>
-          <table className="table table-hover table-bordered">
+          <table className="table table-hover table-bordered align-middle">
             <thead className="table-light">
               <tr>
                 <th>名前</th>
@@ -370,9 +363,9 @@ export const MemberList: React.FC = () => {
         </div>
 
         <div className="row justify-content-center">
-          <div className="col-8 align-middle mb-3">
+          <div className="col-8 mb-3">
             <h2 className="mb-1">連絡先</h2>
-            <table className="table table-bordered">
+            <table className="table table-bordered align-middle">
               <thead className="table-light">
                 <tr>
                   <th>名前</th>
