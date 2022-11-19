@@ -332,7 +332,7 @@ export const MemberList: React.FC = () => {
         <div className="col-8 mb-3">
           <h2 className="mb-2 headline">欠席予定と進捗状況</h2>
           <div className="ps-2">
-            <table className="table table-hover table-bordered align-middle">
+            <table className="table table-hover table-bordered align-middle shadow-sm">
               <thead className="table-light">
                 <tr>
                   <th>名前</th>
@@ -370,7 +370,7 @@ export const MemberList: React.FC = () => {
         <div className="col-8 mb-3">
           <h2 className="mb-2 headline">連絡先</h2>
           <div className="ps-2">
-            <table className="table table-bordered align-middle">
+            <table className="table table-bordered align-middle shadow-sm">
               <thead className="table-light">
                 <tr>
                   <th>名前</th>
@@ -431,7 +431,7 @@ export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
       <div className="row justify-content-center">
         <div className="col-8">
           <h2 className="mb-2 headline">更新履歴</h2>
-          <Accordion className="ms-2">
+          <Accordion className="ms-2 shadow-sm">
             {logs.map((log) => (
               <div key={log.id}>
                 <Accordion.Item eventKey={log.id.toString()}>
@@ -483,7 +483,7 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="container m-0">
+    <div className="container-fluid">
       <div className="row">
         <div className="col-auto border-end bg-light">
           <div className="sticky-top">
