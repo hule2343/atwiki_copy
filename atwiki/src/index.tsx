@@ -18,20 +18,33 @@ root.render(
           <LoginManager>
             <BrowserRouter>
               <nav
-                className="navbar navbar-expand-mg navbar-light justify-content-center"
+                className="navbar navbar-mg navbar-light justify-content-center"
                 style={{ backgroundColor: themeColor }}
               >
                 <div className="d-inline-flex align-items-center">
-                  <span className="navbar-brand me-5 fw-light fs-3">kangi</span>
+                  <span
+                    className="navbar-brand me-5 fw-light fs-2"
+                    style={{ fontFamily: "serif" }}
+                  >
+                    kangi
+                  </span>
                   <ul className="navbar-nav flex-row">
                     <li className="nav-item me-4">
-                      <NavLink className={"nav-link"} to="/register">
-                        Sign up
+                      <NavLink className={"nav-link"} to="/" end>
+                        {({ isActive }) => (
+                          <span className={isActive ? "fw-bold" : ""}>
+                            Home
+                          </span>
+                        )}
                       </NavLink>
                     </li>
                     <li className="nav-item me-4">
-                      <NavLink className={"nav-link"} to="/">
-                        Home
+                      <NavLink className={"nav-link"} to="/register">
+                        {({ isActive }) => (
+                          <span className={isActive ? "fw-bold" : ""}>
+                            Sign up
+                          </span>
+                        )}
                       </NavLink>
                     </li>
                   </ul>
