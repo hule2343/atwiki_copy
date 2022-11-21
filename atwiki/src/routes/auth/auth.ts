@@ -29,7 +29,7 @@ authRouter.post("/logout", (req: Request, res: Response) => {
 authRouter.post("/register", async (req: Request, res: Response) => {
   const { error } = registerSchema.validate(req.body);
 
-  if (error) return res.status(400).json({ error: error.details[0] });
+  if (error) return res.status(400).json({ error: error.details });
 
   await prisma.user
     .create({
@@ -44,7 +44,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     .then((_user) => {
       res.redirect(ClientURL);
     })
-    .catch(() => res.status(400).json("Unable to add user"));
+    .catch((error) => res.status(409).json({ error: error }));
 });
 
 authRouter.get("/is_login", (req, res) => {
@@ -57,7 +57,7 @@ const registerSchema = joi.object().keys({
   name: joi.string().trim().required(),
   email: joi.string().trim().email().required(),
   password: joi.string().min(6).required(),
-  phonenumber: joi.string(),
+  phonenumber: joi.string().allow(""),
   is_student: joi.boolean().default(false),
 });
 

@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { Editable } from "./Editable";
 import "./Http.css";
 import { LoginContext, UserContext } from "./LoginContext";
 
@@ -43,12 +44,12 @@ type Log = {
   title: string;
 };
 
-type PreviousLogData = {
+export type PreviousLogData = {
   name: string;
   previousData: string;
 };
 
-type Form = {
+export type Form = {
   id: number;
   text: string;
   enable: boolean;
@@ -71,7 +72,7 @@ type TabelCellType = {
   onClick: (e: React.MouseEvent) => void;
 };
 
-const TableCell = (props: TabelCellType) => {
+export const TableCell = (props: TabelCellType) => {
   return (
     <div className="d-flex align-items-center justify-content-between">
       <span className="me-2">{props.cellvalue}</span>
@@ -352,8 +353,9 @@ export const MemberList: React.FC = () => {
                       />
                     </td>
                     <td>
-                      <EditForm
+                      <Editable
                         id={student.id}
+                        data={"task"}
                         setLog={logSetter}
                         notify={(status) => notify(status)}
                       />
@@ -375,13 +377,42 @@ export const MemberList: React.FC = () => {
                 <tr>
                   <th>名前</th>
                   <th>連絡</th>
+                  <th>電話番号</th>
                 </tr>
               </thead>
               <tbody>
                 {members.map((member) => (
                   <tr key={member.id}>
-                    <td>{member.name}</td>
-                    <td>{member.email}</td>
+                    <td>
+                      <Editable
+                        id={member.id}
+                        data={"name"}
+                        setLog={logSetter}
+                        notify={(status) => {
+                          notify(status);
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Editable
+                        id={member.id}
+                        data={"email"}
+                        setLog={logSetter}
+                        notify={(status) => {
+                          notify(status);
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Editable
+                        id={member.id}
+                        data={"phonenumber"}
+                        setLog={logSetter}
+                        notify={(status) => {
+                          notify(status);
+                        }}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>

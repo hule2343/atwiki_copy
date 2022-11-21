@@ -2,7 +2,6 @@ import express from "express";
 import userRouter from "./crud/user.js";
 import logRouter from "./crud/log.js";
 import authRouter from "./auth/auth.js";
-import { PrismaClient } from "@prisma/client";
 import session from "express-session";
 import cors from "cors";
 import passport from "./auth/passport.js";

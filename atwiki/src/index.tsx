@@ -25,11 +25,6 @@ root.render(
                   <span className="navbar-brand me-5 fw-light fs-3">kangi</span>
                   <ul className="navbar-nav flex-row">
                     <li className="nav-item me-4">
-                      <NavLink className={"nav-link"} to="/login">
-                        Login
-                      </NavLink>
-                    </li>
-                    <li className="nav-item me-4">
                       <NavLink className={"nav-link"} to="/register">
                         Sign up
                       </NavLink>
