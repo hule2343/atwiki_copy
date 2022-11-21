@@ -1,4 +1,4 @@
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { format } from "date-fns";
 import React, { useState } from "react";
@@ -30,6 +30,7 @@ export const CreateUserForm = () => {
   const [shown, setPasswordShown] = useState(false);
 
   const eye = <FontAwesomeIcon icon={faEye} />;
+  const eyeSlash = <FontAwesomeIcon icon={faEyeSlash} />;
 
   const password = React.useRef({});
 
@@ -84,34 +85,34 @@ export const CreateUserForm = () => {
 
   return (
     <div className="container">
-      <div className="row justify-content-center mt-5">
-        <div>
-          <span style={{ color: "red" }}>*</span>は必須項目です
-        </div>
+      <div className="row justify-content-center my-5">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="col-4 align-self-center border border-2 rounded-3 shadow p-5"
         >
           <h1 className="mb-5 fw-bold">Sign up</h1>
-          <div className="mt-2">
+          <div className="text-danger">{resError}</div>
+          <div className="mt-3">
             <label htmlFor="name" className="form-label">
-              <span style={{ color: "red" }}>*</span>名前
+              <span className="text-danger">*</span>名前
             </label>
             <input
               id="name"
-              className="form-control w-auto"
+              className="form-control"
               placeholder="関技　太郎"
               {...register("name", { required: "必須事項です" })}
             />
-            {errors.name && errors.name.message}
+            <span className="text-danger">
+              {errors.name && errors.name.message}
+            </span>
           </div>
-          <div className="mt-2">
+          <div className="mt-3">
             <label htmlFor="email" className="form-label">
-              <span style={{ color: "red" }}>*</span>メールアドレス
+              <span className="text-danger">*</span>メールアドレス
             </label>
             <input
               id="email"
-              className="form-control w-auto"
+              className="form-control"
               placeholder="kangi@email.com"
               {...register("email", {
                 required: "必須項目です",
@@ -121,54 +122,74 @@ export const CreateUserForm = () => {
                 },
               })}
             />
-            {errors.email && errors.email.message}
+            <span className="text-danger">
+              {errors.email && errors.email.message}
+            </span>
           </div>
-          <div className="mt-2">
+          <div className="mt-3">
             <label htmlFor="phonenumber" className="form-label">
               電話番号
             </label>
             <input
               id="phonenumber"
-              className="form-control w-auto"
+              className="form-control"
               placeholder="000-0000-0000"
               {...register("phonenumber")}
             />
           </div>
-          <div className="mt-2">
+          <div className="mt-3">
             <label htmlFor="password" className="form-label">
-              <span style={{ color: "red" }}>*</span>パスワード
+              <span className="text-danger">*</span>パスワード
             </label>
-            <input
-              id="password"
-              className="form-control w-auto"
-              type={shown ? "text" : "password"}
-              placeholder={"６文字以上"}
-              {...register("password", {
-                required: "必須項目です",
-                minLength: { value: 6, message: "6文字以上入力してください" },
-              })}
-            />
-
-            {errors.password && errors.password.message}
+            <div className="input-group">
+              <input
+                id="password"
+                className="form-control"
+                type={shown ? "text" : "password"}
+                placeholder={"６文字以上"}
+                {...register("password", {
+                  required: "必須項目です",
+                  minLength: { value: 6, message: "6文字以上入力してください" },
+                })}
+              />
+              <span
+                className="btn btn-outline-secondary"
+                onClick={togglePasswordVisiblity}
+              >
+                {shown ? eyeSlash : eye}
+              </span>
+            </div>
+            <span className="text-danger">
+              {errors.password && errors.password.message}
+            </span>
           </div>
           <div className="mt-2">
-            <label htmlFor="password_repeat" className="form-label">
-              <span style={{ color: "red" }}>*</span>パスワード確認用
+            <label htmlFor="password_repeat" className="form-label mt-2">
+              <span className="text-danger">*</span>パスワード確認用
             </label>
-            <input
-              id="password_repeat"
-              className="form-control w-auto"
-              type={shown ? "text" : "password"}
-              {...register("password_repeat", {
-                required: "必須項目です",
-                validate: (value) =>
-                  value === password.current || "パスワードが一致しません",
-              })}
-            />
+            <div className="input-group">
+              <input
+                id="password_repeat"
+                className="form-control"
+                type={shown ? "text" : "password"}
+                {...register("password_repeat", {
+                  required: "必須項目です",
+                  validate: (value) =>
+                    value === password.current || "パスワードが一致しません",
+                })}
+              />
+              <span
+                className="btn btn-outline-secondary"
+                onClick={togglePasswordVisiblity}
+              >
+                {shown ? eyeSlash : eye}
+              </span>
+            </div>
+            <span className="text-danger">
+              {errors.password_repeat && errors.password_repeat.message}
+            </span>
           </div>
-          {errors.password_repeat && errors.password_repeat.message}
-          <i onClick={togglePasswordVisiblity}>{eye}</i>
-          <div className="mt-2">
+          <div className="mt-3 form-check">
             <input
               type="checkbox"
               className="form-check-input"
@@ -176,12 +197,15 @@ export const CreateUserForm = () => {
             />
             <label className="form-check-label ms-2">学生</label>
           </div>
-
-          <button type="submit" className="btn btn-outline-primary mt-2">
-            Sign up
-          </button>
+          <div className="d-flex align-items-center justify-content-between mt-3">
+            <button type="submit" className="btn btn-outline-primary">
+              Sign up
+            </button>
+            <span>
+              <span className="text-danger">*</span>は必須項目です
+            </span>
+          </div>
         </form>
-        <div>{resError}</div>
       </div>
     </div>
   );

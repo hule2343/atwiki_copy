@@ -4,8 +4,6 @@ import React, { useContext } from "react";
 import { discordUrl, Form, PreviousLogData, TableCell } from "./Http";
 import { UserContext } from "./LoginContext";
 
-let logId = 0;
-
 type EditTableProps = {
   id: number;
   data: "task" | "email" | "name" | "phonenumber";
@@ -211,10 +209,10 @@ const leaveLog = (
 ) => {
   let now = new Date();
   let date = format(now, "yyyy/MM/dd_HH:mm:ss");
-  if (previousData == "") {
+  if (previousData === "") {
     previousData = "なし";
   }
-  if (changedData == "") {
+  if (changedData === "") {
     changedData = "なし";
   }
   const title = `${userName}の${type}が${previousData}から${changedData}に変更`;

@@ -1,4 +1,4 @@
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -27,6 +27,7 @@ export const LoginForm = () => {
   const [shown, setPasswordShown] = useState(false);
 
   const eye = <FontAwesomeIcon icon={faEye} />;
+  const eyeSlash = <FontAwesomeIcon icon={faEyeSlash} />;
 
   const togglePasswordVisiblity = () => {
     setPasswordShown(!shown);
@@ -86,16 +87,25 @@ export const LoginForm = () => {
             <label htmlFor="password" className="form-label">
               パスワード
             </label>
-            <input
-              id="password"
-              className="form-control"
-              type={shown ? "text" : "password"}
-              {...register("password", {
-                required: "パスワードを入力してください",
-              })}
-            />
-            <i onClick={togglePasswordVisiblity}>{eye}</i>
-            {errors.password && errors.password.message}{" "}
+            <div className="input-group">
+              <input
+                id="password"
+                className="form-control"
+                type={shown ? "text" : "password"}
+                {...register("password", {
+                  required: "パスワードを入力してください",
+                })}
+              />
+              <span
+                className="btn btn-outline-secondary"
+                onClick={togglePasswordVisiblity}
+              >
+                {shown ? eyeSlash : eye}
+              </span>
+            </div>
+            <span className="text-danger">
+              {errors.password && errors.password.message}{" "}
+            </span>
           </div>
           <div className="d-flex align-items-center justify-content-between mt-3">
             <button type="submit" className="btn btn-outline-primary">
