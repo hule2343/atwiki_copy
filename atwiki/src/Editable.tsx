@@ -199,7 +199,7 @@ export const Editable = (props: EditTableProps) => {
   );
 };
 
-const leaveLog = (
+export const leaveLog = (
   userName: string,
   type: string,
   previousData: string,

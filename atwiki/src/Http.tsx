@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import "./bgColor.css";
-import { Editable } from "./Editable";
+import { Editable, leaveLog } from "./Editable";
 import { LoginContext, UserContext } from "./LoginContext";
 
 // モックサーバーのURL　db.json
@@ -82,113 +82,6 @@ export const TableCell = (props: TabelCellType) => {
       >
         編集
       </button>
-    </div>
-  );
-};
-
-const EditForm = (props: EditProps) => {
-  const { loginUser, setUser } = useContext(UserContext);
-
-  axios.get(`/users/${props.id}`);
-  const [input, setInput] = React.useState<Form>({
-    id: props.id,
-    text: "",
-    enable: false,
-  });
-  const [logData, setLogData] = React.useState<PreviousLogData>({
-    name: "",
-    previousData: "",
-  });
-
-  React.useEffect(() => {
-    axios
-      .get(`/users/${props.id}`)
-      .then((response) => {
-        setInput((state) => ({
-          ...state,
-          text: response.data.task ? response.data.task : "",
-        }));
-        setLogData({
-          name: response.data.name,
-          previousData: response.data.task,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [props.id]);
-
-  const handleSubmit = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setInput((state) => ({
-      ...state,
-      text: input.text,
-      enable: !input.enable,
-    }));
-
-    if (logData.previousData !== input.text) {
-      axios
-        .patch("/users/" + props.id, {
-          task: input.text,
-        })
-        .then((res) => {
-          setUser(res.data);
-        })
-        .catch((error) => {
-          if (error.response) {
-            console.log(error);
-          }
-        });
-      leaveLog(
-        logData.name,
-        "進捗状況",
-        logData.previousData,
-        input.text,
-        props.setLog,
-        props.notify
-      );
-      setLogData((state) => ({ ...state, previousData: input.text }));
-    }
-  };
-
-  const handleInput = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setInput((state) => ({
-      ...state,
-      enable: !input.enable,
-    }));
-  };
-
-  return loginUser.id === props.id ? (
-    <div>
-      <form>
-        {input.enable ? (
-          <div className="d-flex align-items-center justify-content-between">
-            <input
-              onChange={(e) => {
-                setInput((state) => ({ ...state, text: e.target.value }));
-              }}
-              type="text"
-              value={input.text}
-              className="form-control me-2"
-            />
-            <button
-              className="btn btn-outline-primary text-nowrap"
-              onClick={handleSubmit}
-            >
-              保存
-            </button>
-          </div>
-        ) : (
-          <>
-            <TableCell cellvalue={input.text} onClick={handleInput} />
-          </>
-        )}
-      </form>
-    </div>
-  ) : (
-    <div>
-      <span>{input.text}</span>
     </div>
   );
 };
@@ -271,6 +164,7 @@ const EditDate = (props: EditProps) => {
             <DatePicker
               selected={selectDate}
               onChange={handleChange}
+              dateFormat="yyyy/MM/dd"
               className="form-control me-auto"
             />
             <button
@@ -423,37 +317,6 @@ export const MemberList: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const leaveLog = (
-  userName: string,
-  type: string,
-  previousData: string,
-  changedData: string,
-  setLog: () => void,
-  notify: (status: string) => void
-) => {
-  let now = new Date();
-  let date = format(now, "yyyy/MM/dd_HH:mm:ss");
-  const title = `${userName}の${type}が${previousData}から${changedData}に変更`;
-  axios
-    .post("/logs/log", {
-      date: date,
-      title: title,
-    })
-    .then(() => {
-      setLog();
-      notify("success");
-      axios.post(discordUrl, {
-        content: `${title}`,
-      });
-    })
-    .catch((err) => {
-      if (err) {
-        console.log(err);
-        notify("error");
-      }
-    });
 };
 
 export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {

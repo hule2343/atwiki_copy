@@ -95,6 +95,7 @@ export const LoginForm = () => {
                 {...register("password", {
                   required: "パスワードを入力してください",
                 })}
+                autoComplete="current-password"
               />
               <span
                 className="btn btn-outline-secondary"

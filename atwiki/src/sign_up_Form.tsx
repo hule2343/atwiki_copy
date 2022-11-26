@@ -151,6 +151,7 @@ export const CreateUserForm = () => {
                   required: "必須項目です",
                   minLength: { value: 6, message: "6文字以上入力してください" },
                 })}
+                autoComplete="new-password"
               />
               <span
                 className="btn btn-outline-secondary"
@@ -177,6 +178,7 @@ export const CreateUserForm = () => {
                   validate: (value) =>
                     value === password.current || "パスワードが一致しません",
                 })}
+                autoComplete="new-password"
               />
               <span
                 className="btn btn-outline-secondary"
