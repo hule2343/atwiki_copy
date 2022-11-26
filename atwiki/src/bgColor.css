@@ -1,0 +1,15 @@
+:root {
+  --main-bg-color: #00729b;
+}
+
+.headline {
+  border-bottom: 3px solid var(--main-bg-color);
+}
+
+nav {
+  background-color: var(--main-bg-color);
+}
+
+.g-color {
+  color: #d3b77a;
+}

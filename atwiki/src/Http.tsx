@@ -1,14 +1,14 @@
-import React, { useContext, useEffect } from "react";
 import axiosBase from "axios";
 import { format } from "date-fns";
+import React, { useContext } from "react";
 import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { LoginForm } from "./login_Form";
+import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { response } from "express";
+import "./bgColor.css";
+import { Editable, leaveLog } from "./Editable";
 import { LoginContext, UserContext } from "./LoginContext";
-import { Editable } from "./Editable";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -40,7 +40,6 @@ export type User = {
 
 type Log = {
   id: number;
-  url: string;
   date: string;
   title: string;
 };
@@ -62,6 +61,12 @@ type DayForm = {
   enable: boolean;
 };
 
+type EditProps = {
+  id: number;
+  setLog: () => void;
+  notify: (status: string) => void;
+};
+
 type TabelCellType = {
   cellvalue: string | undefined;
   onClick: (e: React.MouseEvent) => void;
@@ -69,123 +74,19 @@ type TabelCellType = {
 
 export const TableCell = (props: TabelCellType) => {
   return (
-    <div className="container">
-      <div className="row">
-        <span className="col-auto me-auto d-flex align-items-center">
-          {props.cellvalue}
-        </span>
-        <button
-          className="btn btn-outline-primary col-auto"
-          onClick={props.onClick}
-        >
-          編集
-        </button>
-      </div>
+    <div className="d-flex align-items-center justify-content-between">
+      <span className="me-2">{props.cellvalue}</span>
+      <button
+        className="btn btn-outline-primary text-nowrap"
+        onClick={props.onClick}
+      >
+        編集
+      </button>
     </div>
   );
 };
 
-const EditForm = (props: { id: number }) => {
-  const { loginUser, setUser } = useContext(UserContext);
-
-  axios.get(`/users/${props.id}`);
-  const [input, setInput] = React.useState<Form>({
-    id: props.id,
-    text: "",
-    enable: false,
-  });
-  const [logData, setLogData] = React.useState<PreviousLogData>({
-    name: "",
-    previousData: "",
-  });
-
-  React.useEffect(() => {
-    axios
-      .get(`/users/${props.id}`)
-      .then((response) => {
-        setInput((state) => ({
-          ...state,
-          text: response.data.task,
-        }));
-        setLogData({
-          name: response.data.name,
-          previousData: response.data.task,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [props.id]);
-
-  const handleSubmit = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setInput((state) => ({
-      ...state,
-      text: input.text,
-      enable: !input.enable,
-    }));
-
-    axios
-      .patch("/users/" + props.id, {
-        task: input.text,
-      })
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error);
-        }
-      });
-    leaveLog(logData.name, "進捗状況", logData.previousData, input.text);
-    setLogData((state) => ({ ...state, previousData: input.text }));
-  };
-
-  const handleInput = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setInput((state) => ({
-      ...state,
-      enable: !input.enable,
-    }));
-  };
-
-  return loginUser.id === props.id ? (
-    <div>
-      <form>
-        {input.enable ? (
-          <div className="container">
-            <div className="row">
-              <input
-                onChange={(e) => {
-                  setInput((state) => ({ ...state, text: e.target.value }));
-                }}
-                type="text"
-                value={input.text}
-                className="col-auto me-3"
-              />
-              <button
-                className="btn btn-outline-secondary col-auto"
-                onClick={handleSubmit}
-              >
-                保存
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <TableCell cellvalue={input.text} onClick={handleInput} />
-          </>
-        )}
-      </form>
-    </div>
-  ) : (
-    <div>
-      <span>{input.text}</span>
-    </div>
-  );
-};
-
-const EditDate = (props: { id: number }) => {
+const EditDate = (props: EditProps) => {
   const { loginUser, setUser } = useContext(UserContext);
 
   const [date, setDate] = React.useState<DayForm>({
@@ -213,28 +114,32 @@ const EditDate = (props: { id: number }) => {
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     setDate((state) => ({ ...state, enable: !date.enable }));
-    axios
-      .patch("/users/" + props.id, {
-        date: date.date,
-      })
-      .then(() => {
-        setDate((state) => ({ ...state, date: date.date }));
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error);
-        }
-      });
-    leaveLog(
-      logData.name,
-      "欠席予定日",
-      logData.previousData,
-      date.date ? date.date : "none"
-    );
-    setLogData((state) => ({
-      ...state,
-      previousData: date.date ? date.date : "none",
-    }));
+    if (logData.previousData !== date.date) {
+      axios
+        .patch("/users/" + props.id, {
+          date: date.date,
+        })
+        .then(() => {
+          setDate((state) => ({ ...state, date: date.date }));
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error);
+          }
+        });
+      leaveLog(
+        logData.name,
+        "欠席予定日",
+        logData.previousData,
+        date.date ? date.date : "none",
+        props.setLog,
+        props.notify
+      );
+      setLogData((state) => ({
+        ...state,
+        previousData: date.date ? date.date : "none",
+      }));
+    }
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -252,21 +157,22 @@ const EditDate = (props: { id: number }) => {
     <div>
       <form>
         {date.enable ? (
-          <div className="container">
-            <div className="row">
-              <label>
-                <i className="calendar alternate outline icon"></i>
-              </label>
-              <div className="d-flex align-items-center col-auto me-auto">
-                <DatePicker selected={selectDate} onChange={handleChange} />
-              </div>
-              <button
-                className="btn btn-outline-primary col-auto"
-                onClick={handleSubmit}
-              >
-                保存
-              </button>
-            </div>
+          <div className="d-flex align-items-center">
+            <label>
+              <i className="calendar alternate outline icon"></i>
+            </label>
+            <DatePicker
+              selected={selectDate}
+              onChange={handleChange}
+              dateFormat="yyyy/MM/dd"
+              className="form-control me-auto"
+            />
+            <button
+              className="btn btn-outline-primary text-nowrap ms-2"
+              onClick={handleSubmit}
+            >
+              保存
+            </button>
           </div>
         ) : (
           <>
@@ -282,10 +188,16 @@ const EditDate = (props: { id: number }) => {
 
 export const MemberList: React.FC = () => {
   const [members, setMembers] = React.useState<User[]>([]);
+  const [logs, setLog] = React.useState<Log[]>([]);
 
   React.useEffect(() => {
     axios.get("/users").then((response) => {
+      console.log(response.data);
       setMembers(response.data);
+    });
+    axios.get("/logs").then((response) => {
+      console.log(response.data);
+      setLog(response.data);
     });
   }, []);
 
@@ -293,110 +205,137 @@ export const MemberList: React.FC = () => {
     return members.is_student === true;
   });
 
-  return (
-    <div className="p-4">
-      <table className="table table-hover table-bordered align-middle w-auto">
-        <thead className="table-light">
-          <tr>
-            <th>名前</th>
-            <th>欠席予定</th>
-            <th>進捗状況</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student) => (
-            <tr key={student.id}>
-              <td>{student.name}</td>
-              <td>
-                <EditDate id={student.id} />
-              </td>
-              <td>
-                <Editable id={student.id} data={"task"} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  const logSetter = () => {
+    axios.get("/logs").then((response) => {
+      console.log(response.data);
+      setLog(response.data);
+    });
+  };
 
-      <table className="table table-bordered align-middle w-auto">
-        <thead className="table-light">
-          <tr>
-            <th>名前</th>
-            <th>連絡</th>
-            <th>電話番号</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((member) => (
-            <tr key={member.id}>
-              <td>
-                <Editable id={member.id} data={"name"} />
-              </td>
-              <td>
-                <Editable id={member.id} data={"email"} />
-              </td>
-              <td>
-                <Editable id={member.id} data={"phonenumber"} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  const notify = (status: string) => {
+    if (status === "error") {
+      toast.error("エラーが発生しました");
+    } else if (status === "success") {
+      toast.success("保存しました");
+    }
+  };
+
+  return (
+    <div className="container p-4">
+      <Toaster position="top-right" />
+      <div className="row justify-content-center">
+        <div className="col-8 mb-3">
+          <h2 className="mb-2 headline">欠席予定と進捗状況</h2>
+          <div className="ps-2">
+            <table className="table table-hover table-bordered align-middle shadow-sm">
+              <thead className="table-light">
+                <tr>
+                  <th>名前</th>
+                  <th>欠席予定</th>
+                  <th>進捗状況</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map((student) => (
+                  <tr key={student.id}>
+                    <td>{student.name}</td>
+                    <td>
+                      <EditDate
+                        id={student.id}
+                        setLog={logSetter}
+                        notify={(status) => notify(status)}
+                      />
+                    </td>
+                    <td>
+                      <Editable
+                        id={student.id}
+                        data={"task"}
+                        setLog={logSetter}
+                        notify={(status) => notify(status)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div className="row justify-content-center">
+        <div className="col-8 mb-3">
+          <h2 className="mb-2 headline">連絡先</h2>
+          <div className="ps-2">
+            <table className="table table-bordered align-middle shadow-sm">
+              <thead className="table-light">
+                <tr>
+                  <th>名前</th>
+                  <th>連絡</th>
+                  <th>電話番号</th>
+                </tr>
+              </thead>
+              <tbody>
+                {members.map((member) => (
+                  <tr key={member.id}>
+                    <td>
+                      <Editable
+                        id={member.id}
+                        data={"name"}
+                        setLog={logSetter}
+                        notify={(status) => {
+                          notify(status);
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Editable
+                        id={member.id}
+                        data={"email"}
+                        setLog={logSetter}
+                        notify={(status) => {
+                          notify(status);
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Editable
+                        id={member.id}
+                        data={"phonenumber"}
+                        setLog={logSetter}
+                        notify={(status) => {
+                          notify(status);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <Loglist logs={logs} />
+      </div>
     </div>
   );
 };
 
-const leaveLog = (
-  userName: string,
-  type: string,
-  previousData: string,
-  changedData: string
-) => {
-  let now = new Date();
-  let date = format(now, "yyyy/MM/dd");
-  const url = `http://localhost:3001/logs/${logId + 1}`;
-  const title = `${userName}の${type}が${previousData}から${changedData}に変更`;
-  axios
-    .post("/logs/log", {
-      date: date,
-      url: url,
-      title: title,
-    })
-    .then((response) => {
-      axios.post(discordUrl, {
-        content: `${title}`,
-      });
-    })
-    .catch((error: Error) => {
-      console.log(error.message);
-    });
-};
-
-export const Loglist: React.FC = () => {
-  const [logs, setLog] = React.useState<Log[]>([]);
-
-  React.useEffect(() => {
-    axios.get("/logs").then((response) => {
-      console.log(response.data);
-      setLog(response.data);
-      logId = response.data.length;
-    });
-  }, []);
-
+export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
   return (
-    <div className="ps-4 pb-4">
-      <h3>更新履歴</h3>
-      <div className="w-50">
-        <Accordion>
-          {logs.map((log) => (
-            <div key={log.id}>
-              <Accordion.Item eventKey={log.id.toString()}>
-                <Accordion.Header>{log.date}</Accordion.Header>
-                <Accordion.Body>{log.title}</Accordion.Body>
-              </Accordion.Item>
-            </div>
-          ))}
-        </Accordion>
+    <div className="container">
+      <div className="row justify-content-center">
+        <div className="col-8">
+          <h2 className="mb-2 headline">更新履歴</h2>
+          <Accordion className="ms-2 shadow-sm">
+            {logs.map((log) => (
+              <div key={log.id}>
+                <Accordion.Item eventKey={log.id.toString()}>
+                  <Accordion.Header>{log.date}</Accordion.Header>
+                  <Accordion.Body>{log.title}</Accordion.Body>
+                </Accordion.Item>
+              </div>
+            ))}
+          </Accordion>
+        </div>
       </div>
     </div>
   );
@@ -406,9 +345,11 @@ const TestUserInfo: React.FC = () => {
   const { loginUser, setUser } = useContext(UserContext);
 
   return (
-    <div>
-      <li>{loginUser.name}</li>
-      <li>{loginUser.email}</li>
+    <div className="mx-2">
+      <ul className="list-unstyled ms-3">
+        <li>{loginUser.name}</li>
+        <li>{loginUser.email}</li>
+      </ul>
     </div>
   );
 };
@@ -436,16 +377,24 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div>
-      <button onClick={handleLogout}>アカウント切り替え</button>
-      <div>
-        <TestUserInfo />
-      </div>
-      <div>
-        <MemberList />
-      </div>
-      <div>
-        <Loglist />
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-auto border-end bg-light">
+          <div className="sticky-top">
+            <button
+              onClick={handleLogout}
+              className="btn btn-outline-secondary btn-sm m-2"
+            >
+              アカウント切り替え
+            </button>
+            <div>
+              <TestUserInfo />
+            </div>
+          </div>
+        </div>
+        <div className="col">
+          <MemberList />
+        </div>
       </div>
     </div>
   );

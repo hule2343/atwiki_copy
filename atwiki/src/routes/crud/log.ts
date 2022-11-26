@@ -1,40 +1,62 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import * as fs from "fs";
 
 const logRouter = Router();
 
+type Log = {
+  id: number;
+  date: string;
+  title: string;
+};
+
 logRouter.get("/", async (req, res) => {
-  const logs = await prisma.log.findMany();
-
-  res.json(logs);
-});
-
-logRouter.get("/:id", async (req, res) => {
-  const { id } = req.params;
-
-  const log = await prisma.log.findFirst({
-    where: {
-      id: Number(id),
-    },
+  await fs.readFile("log.txt", "utf-8", (err, text) => {
+    if (err) {
+      console.log(err);
+      return res.send(err);
+    }
+    const logList = text.split("\n");
+    const logLength = logList.length - 1; //最後の空行を含まない
+    const logJsonList: Log[] = [];
+    for (let i = 1; i <= 10; i++) {
+      if (logLength - i < 0) {
+        break;
+      } else {
+        const date = logList[logLength - i].split(" ", 1)[0];
+        logJsonList.push({
+          id: i,
+          date: date.replace("_", " "),
+          title: logList[logLength - i].split(date + " ")[1],
+        });
+      }
+    }
+    return res.send(logJsonList);
   });
-
-  res.json(log);
 });
 
 logRouter.post("/log", async (req, res) => {
-  const { date, url, title } = req.body;
+  const { date, title } = req.body;
 
-  const log = await prisma.log.create({
-    data: {
-      date: date,
-      url: url,
-      title: title,
-    },
+  await fs.readFile("log.txt", "utf-8", (err, text) => {
+    if (err) {
+      console.log(err);
+      return res.send(err);
+    }
+    const logList = text.split("\n");
+    logList.pop(); //空行の要素削除
+    logList.push(`${date} ${title}\n`);
+    const logLength = logList.length;
+    if (logLength > 10) {
+      logList.shift();
+    }
+    fs.writeFile("log.txt", logList.join("\n"), (err) => {
+      if (err) {
+        console.log(err);
+        return res.send(err);
+      }
+      return res.send();
+    });
   });
-
-  res.json({ log });
 });
 
 export default logRouter;
