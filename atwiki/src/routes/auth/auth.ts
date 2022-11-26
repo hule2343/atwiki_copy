@@ -1,6 +1,6 @@
 import argon2id from "argon2";
 import { Router, Request, Response } from "express";
-import passport, { isLoggedIn } from "./passport.js";
+import passport, { isLoggedIn } from "./passport";
 import { PrismaClient } from "@prisma/client";
 import joi from "joi";
 
@@ -31,7 +31,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 
   if (error) return res.status(400).json({ error: error.details });
 
-  await prisma.user
+  prisma.user
     .create({
       data: {
         name: req.body.name,
@@ -41,8 +41,8 @@ authRouter.post("/register", async (req: Request, res: Response) => {
         is_student: req.body.is_student,
       },
     })
-    .then((_user) => {
-      res.redirect(ClientURL);
+    .then((user) => {
+      res.status(200).json(user);
     })
     .catch((error) => res.status(409).json({ error: error }));
 });

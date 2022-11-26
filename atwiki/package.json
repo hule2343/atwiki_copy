@@ -9,7 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/connect-flash": "^0.0.37",
     "@types/cors": "^2.8.12",
-    "@types/jest": "^29.2.2",
+    "@types/jest": "^29.2.3",
     "@types/node": "^16.11.43",
     "@types/passport": "^1.0.11",
     "@types/passport-local": "^1.0.34",
@@ -42,7 +42,7 @@
   "scripts": {
     "start": "node --loader ts-node/esm ./src/routes/index.ts",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject"
   },
   "proxy": "http://localhost:3001",
@@ -62,6 +62,18 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testMatch": [
+      "**/test/**/*.test.(ts|tsx)"
     ]
   },
   "devDependencies": {
