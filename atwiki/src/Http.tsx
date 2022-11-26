@@ -6,8 +6,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import "./bgColor.css";
 import { Editable } from "./Editable";
-import "./Http.css";
 import { LoginContext, UserContext } from "./LoginContext";
 
 // モックサーバーのURL　db.json
