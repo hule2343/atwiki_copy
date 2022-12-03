@@ -1,14 +1,17 @@
 import axios from "axios";
-import React, { useContext } from "react";
-import { Form, PreviousLogData, TableCell, discordUrl } from "./Http";
-import { UserContext } from "./LoginContext";
 import { format } from "date-fns";
+import React, { useContext } from "react";
+import { discordUrl, Form, PreviousLogData, TableCell } from "./Http";
+import { UserContext } from "./LoginContext";
 
-let logId = 0;
+type EditTableProps = {
+  id: number;
+  data: "task" | "email" | "name" | "phonenumber";
+  setLog: () => void;
+  notify: (status: string) => void;
+};
 
-type data = "task" | "email" | "name" | "phonenumber";
-
-export const Editable = (props: { id: number; data: data }) => {
+export const Editable = (props: EditTableProps) => {
   const { loginUser, setUser } = useContext(UserContext);
 
   const [input, setInput] = React.useState<Form>({
@@ -29,8 +32,12 @@ export const Editable = (props: { id: number; data: data }) => {
           case "task":
             setInput((state) => ({
               ...state,
-              text: response.data.task,
+              text: response.data.task ? response.data.task : "",
             }));
+            setLogData({
+              name: response.data.name,
+              previousData: response.data.task,
+            });
 
             break;
           case "email":
@@ -38,24 +45,32 @@ export const Editable = (props: { id: number; data: data }) => {
               ...state,
               text: response.data.email,
             }));
+            setLogData({
+              name: response.data.name,
+              previousData: response.data.email,
+            });
             break;
           case "name":
             setInput((state) => ({
               ...state,
               text: response.data.name,
             }));
+            setLogData({
+              name: response.data.name,
+              previousData: response.data.name,
+            });
             break;
           case "phonenumber":
             setInput((state) => ({
               ...state,
               text: response.data.phonenumber,
             }));
+            setLogData({
+              name: response.data.name,
+              previousData: response.data.phonenumber,
+            });
             break;
         }
-        setLogData({
-          name: response.data.name,
-          previousData: response.data.task,
-        });
       })
       .catch((error) => {
         console.log(error);
@@ -70,62 +85,76 @@ export const Editable = (props: { id: number; data: data }) => {
     }));
     console.log("handleSubmit", input.text);
 
-    switch (props.data) {
-      case "task":
-        axios
-          .patch("/users/" + props.id, { task: input.text })
-          .then((res) => {
-            console.log(loginUser.task);
-            setUser(res.data);
-          })
-          .catch((error) => {
-            if (error.response) {
-              console.log(error);
-            }
-          });
-        break;
-      case "email":
-        axios
-          .patch("/users/" + props.id, { email: input.text })
-          .then((res) => {
-            console.log(loginUser.task);
-            setUser(res.data);
-          })
-          .catch((error) => {
-            if (error.response) {
-              console.log(error);
-            }
-          });
-        break;
-      case "name":
-        axios
-          .patch("/users/" + props.id, { name: input.text })
-          .then((res) => {
-            console.log(loginUser.task);
-            setUser(res.data);
-          })
-          .catch((error) => {
-            if (error.response) {
-              console.log(error);
-            }
-          });
-        break;
-      case "phonenumber":
-        axios
-          .patch("/users/" + props.id, { phonenumber: input.text })
-          .then((res) => {
-            console.log(loginUser.task);
-            setUser(res.data);
-          })
-          .catch((error) => {
-            if (error.response) {
-              console.log(error);
-            }
-          });
-        break;
+    if (logData.previousData !== input.text) {
+      let data_label = "";
+      switch (props.data) {
+        case "task":
+          data_label = "進捗状況";
+          axios
+            .patch("/users/" + props.id, { task: input.text })
+            .then((res) => {
+              console.log(loginUser.task);
+              setUser(res.data);
+            })
+            .catch((error) => {
+              if (error.response) {
+                console.log(error);
+              }
+            });
+          break;
+        case "email":
+          data_label = "メールアドレス";
+          axios
+            .patch("/users/" + props.id, { email: input.text })
+            .then((res) => {
+              console.log(loginUser.task);
+              setUser(res.data);
+            })
+            .catch((error) => {
+              if (error.response) {
+                console.log(error);
+              }
+            });
+          break;
+        case "name":
+          data_label = "名前";
+          axios
+            .patch("/users/" + props.id, { name: input.text })
+            .then((res) => {
+              console.log(loginUser.task);
+              setUser(res.data);
+            })
+            .catch((error) => {
+              if (error.response) {
+                console.log(error);
+              }
+            });
+          break;
+        case "phonenumber":
+          data_label = "電話番号";
+          axios
+            .patch("/users/" + props.id, { phonenumber: input.text })
+            .then((res) => {
+              console.log(loginUser.task);
+              setUser(res.data);
+            })
+            .catch((error) => {
+              if (error.response) {
+                console.log(error);
+              }
+            });
+          break;
+      }
+      leaveLog(
+        logData.name,
+        data_label,
+        logData.previousData,
+        input.text,
+        props.setLog,
+        props.notify
+      );
+      setLogData((state) => ({ ...state, previousData: input.text }));
     }
-    leaveLog(logData.name, "進捗状況", logData.previousData, input.text);
-    setLogData((state) => ({ ...state, previousData: input.text }));
   };
 
   const handleInput = (e: React.MouseEvent) => {
@@ -140,23 +169,21 @@ export const Editable = (props: { id: number; data: data }) => {
     <div>
       <form>
         {input.enable ? (
-          <div className="container">
-            <div className="row">
-              <input
-                onChange={(e) => {
-                  setInput((state) => ({ ...state, text: e.target.value }));
-                }}
-                type="text"
-                value={input.text}
-                className="col-auto me-3"
-              />
-              <button
-                className="btn btn-outline-secondary col-auto"
-                onClick={handleSubmit}
-              >
-                保存
-              </button>
-            </div>
+          <div className="d-flex align-items-center justify-content-between">
+            <input
+              onChange={(e) => {
+                setInput((state) => ({ ...state, text: e.target.value }));
+              }}
+              type="text"
+              value={input.text}
+              className="form-control me-2"
+            />
+            <button
+              className="btn btn-outline-primary text-nowrap"
+              onClick={handleSubmit}
+            >
+              保存
+            </button>
           </div>
         ) : (
           <>
@@ -172,28 +199,39 @@ export const Editable = (props: { id: number; data: data }) => {
   );
 };
 
-const leaveLog = (
+export const leaveLog = (
   userName: string,
   type: string,
   previousData: string,
-  changedData: string
+  changedData: string,
+  setLog: () => void,
+  notify: (status: string) => void
 ) => {
   let now = new Date();
-  let date = format(now, "yyyy/MM/dd");
-  const url = `http://localhost:3001/logs/${logId + 1}`;
+  let date = format(now, "yyyy/MM/dd_HH:mm:ss");
+  if (previousData === "") {
+    previousData = "なし";
+  }
+  if (changedData === "") {
+    changedData = "なし";
+  }
   const title = `${userName}の${type}が${previousData}から${changedData}に変更`;
   axios
     .post("/logs/log", {
       date: date,
-      url: url,
       title: title,
     })
-    .then((response) => {
+    .then(() => {
+      setLog();
+      notify("success");
       axios.post(discordUrl, {
         content: `${title}`,
       });
     })
-    .catch((error: Error) => {
-      console.log(error.message);
+    .catch((err) => {
+      if (err) {
+        console.log(err);
+        notify("error");
+      }
     });
 };
