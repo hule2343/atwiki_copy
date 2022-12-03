@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
-import { axios } from "./Http";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "./LoginContext";
-import { LoginSetContext } from "./LoginContext";
+import { axios } from "./Http";
+import { LoginSetContext, UserContext } from "./LoginContext";
 
 type loginForm = {
   username: string;
@@ -22,6 +23,15 @@ export const LoginForm = () => {
   const { loginUser, setUser } = useContext(UserContext);
 
   const [error, setError] = useState<string>("");
+
+  const [shown, setPasswordShown] = useState(false);
+
+  const eye = <FontAwesomeIcon icon={faEye} />;
+  const eyeSlash = <FontAwesomeIcon icon={faEyeSlash} />;
+
+  const togglePasswordVisiblity = () => {
+    setPasswordShown(!shown);
+  };
 
   const onSubmit = (data: loginForm): void => {
     axios
@@ -49,40 +59,63 @@ export const LoginForm = () => {
         setError("ログインに失敗しました");
         console.log(error);
         if (error.response) {
+          console.log(error.response);
         }
       });
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="ms-3">
-        <div>
-          <label htmlFor="name" className="form-label">
-            名前
-          </label>
-          <input
-            id="name"
-            className="form-control w-auto"
-            {...register("username", { required: true })}
-          />
-          {errors.username && <div>必須項目です</div>}
-        </div>
-        <div className="mt-2">
-          <label htmlFor="password" className="form-label">
-            パスワード
-          </label>
-          <input
-            id="password"
-            className="form-control w-auto"
-            {...register("password", { required: true })}
-          />
-          {errors.password && <div>必須項目です</div>}
-        </div>
-        <button type="submit" className="btn btn-outline-primary mt-2">
-          Login
-        </button>
-      </form>
-      <p>{error}</p>
+    <div className="container">
+      <div className="row justify-content-center mt-5">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="col-4 border border-2 rounded-3 shadow p-5"
+        >
+          <h1 className="mb-5 fw-bold">Login</h1>
+          <div>
+            <label htmlFor="name" className="form-label">
+              名前
+            </label>
+            <input
+              id="name"
+              className="form-control"
+              {...register("username", { required: true })}
+            />
+            {errors.username && <div className="text-danger">必須項目です</div>}
+          </div>
+          <div className="mt-2">
+            <label htmlFor="password" className="form-label">
+              パスワード
+            </label>
+            <div className="input-group">
+              <input
+                id="password"
+                className="form-control"
+                type={shown ? "text" : "password"}
+                {...register("password", {
+                  required: "パスワードを入力してください",
+                })}
+                autoComplete="current-password"
+              />
+              <span
+                className="btn btn-outline-secondary"
+                onClick={togglePasswordVisiblity}
+              >
+                {shown ? eyeSlash : eye}
+              </span>
+            </div>
+            <span className="text-danger">
+              {errors.password && errors.password.message}{" "}
+            </span>
+          </div>
+          <div className="d-flex align-items-center justify-content-between mt-3">
+            <button type="submit" className="btn btn-outline-primary">
+              Login
+            </button>
+            <span className="form-text text-danger me-2">{error}</span>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
