@@ -10,11 +10,11 @@ const ClientURL = "http://localhost:3000";
 
 authRouter.post("/login", passport.authenticate("local"), (req, res) => {
   console.log("Login succeed");
-  res.json(req.user);
+  res.status(200).json(req.user);
 });
 
 authRouter.get("/login/fail", (req: Request, res: Response) => {
-  res.status(401).json({ message: "login was failured" });
+  res.status(403).json({ message: "login was failured" });
 });
 
 authRouter.post("/logout", (req: Request, res: Response) => {
@@ -42,7 +42,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
       },
     })
     .then((user) => {
-      res.status(200).json(user);
+      res.status(200).json({ id: user.id, name: user.name });
     })
     .catch((error) => res.status(409).json({ error: error }));
 });
