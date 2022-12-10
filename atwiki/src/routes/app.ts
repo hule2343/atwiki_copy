@@ -1,10 +1,10 @@
 import express from "express";
-import userRouter from "./crud/user";
-import logRouter from "./crud/log";
-import authRouter from "./auth/auth";
+import userRouter from "./crud/user.js";
+import logRouter from "./crud/log.js";
+import authRouter from "./auth/auth.js";
 import session from "express-session";
 import cors from "cors";
-import passport from "./auth/passport";
+import passport from "./auth/passport.js";
 import helmet from "helmet";
 const app = express();
 

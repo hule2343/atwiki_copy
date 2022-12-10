@@ -18,7 +18,6 @@ type User = {
 const prisma = new PrismaClient();
 
 passport.serializeUser((user: Express.User, done: any) => {
-  console.log("serialized", user);
   done(null, (user as User).id);
 });
 
@@ -30,14 +29,9 @@ passport.use(
     },
 
     async (username: string, password: string, done: any) => {
-      console.log(username);
       const user = await prisma.user.findUnique({
         where: { name: username },
       });
-      console.log("LocalStrategy");
-
-      console.log(user);
-
       const response = "invalid login credentials";
 
       if (!user) return done(response);
@@ -45,7 +39,6 @@ passport.use(
         const passMatch = await argon2id.verify(user.password, password);
 
         if (passMatch) {
-          console.log("pass Matched", user);
           return done(null, user);
         }
 
@@ -69,8 +62,6 @@ passport.deserializeUser(async function (id: number, done: any) {
 });
 
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
-  console.log("authenticate", req.user);
-  console.log("isAuthenticate", req.isAuthenticated());
   if (req.isAuthenticated()) return next();
 
   res.status(401);
