@@ -1,6 +1,6 @@
 import argon2id from "argon2";
 import { Router, Request, Response } from "express";
-import passport, { isLoggedIn } from "./passport";
+import passport, { isLoggedIn } from "./passport.js";
 import { PrismaClient } from "@prisma/client";
 import joi from "joi";
 
@@ -9,7 +9,6 @@ const authRouter = Router();
 const ClientURL = "http://localhost:3000";
 
 authRouter.post("/login", passport.authenticate("local"), (req, res) => {
-  console.log("Login succeed");
   res.status(200).json(req.user);
 });
 
@@ -48,8 +47,6 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 });
 
 authRouter.get("/is_login", (req, res) => {
-  console.log("/logout", req.isAuthenticated());
-  console.log("is_login called", req.user);
   res.json({ is_login: req.isAuthenticated() });
 });
 
