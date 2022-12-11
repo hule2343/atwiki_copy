@@ -14,8 +14,8 @@ jest.mock("react-router-dom", () => ({
 jest.mock("../Http");
 const mockedAxios = axios as jest.Mocked<AxiosInstance>;
 
-describe("LoginFrom", () => {
-  test("when name and password are entered, they are passed to onSubmit", async () => {
+describe("LoginForm", () => {
+  test("when name and password are entered, onsubmit is called without error and navigator is called with ('/')", async () => {
     mockedAxios.post.mockResolvedValue({ data: {} });
     mockedAxios.get.mockResolvedValue({ data: { is_login: true } });
     onsubmit = jest.fn();
@@ -30,7 +30,7 @@ describe("LoginFrom", () => {
       );
     });
     await act(async () => {
-      userEvent.type(screen.getByRole("textbox", { name: "名前" }), "tanaka");
+      userEvent.type(screen.getByLabelText("名前"), "tanaka");
       userEvent.type(screen.getByLabelText("パスワード"), "test123");
       userEvent.click(screen.getByRole("button"));
     });
