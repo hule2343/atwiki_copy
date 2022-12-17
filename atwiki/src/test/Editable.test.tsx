@@ -40,25 +40,8 @@ const EditTableDummyProps: EditTableProps = {
   notify: mockedNotify,
 };
 
-describe("Editable", () => {
-  test("render", async () => {
-    mockedAxios.get.mockResolvedValue({ data: dummyUser });
-    render(
-      <UserContext.Provider value={dummyLoginUser}>
-        <Editable
-          id={EditTableDummyProps.id}
-          data={EditTableDummyProps.data}
-          setLog={EditTableDummyProps.setLog}
-          notify={EditTableDummyProps.notify}
-        />
-      </UserContext.Provider>
-    );
-    await waitFor(() => {
-      expect(screen.getByRole("button")).toBeInTheDocument;
-      expect(screen.getByText("編集")).toBeInTheDocument;
-      expect(screen.getByText("previous")).toBeInTheDocument;
-    });
-  });
+describe("Editable general", () => {
+  EditTableDummyProps.data = "task";
   test("when the button is clicked, button name is changed", async () => {
     mockedAxios.get.mockResolvedValue({ data: dummyUser });
     render(
@@ -77,10 +60,73 @@ describe("Editable", () => {
       expect(screen.getByText("保存")).toBeInTheDocument;
     });
   });
+  test("when the button is pushed without change, axios.post is not called", async () => {
+    mockedAxios.get.mockResolvedValue({ data: dummyUser });
+    mockedAxios.patch.mockResolvedValue({ data: dummyUser });
+    mockedAxios.post.mockResolvedValue({});
+    render(
+      <UserContext.Provider value={dummyLoginUser}>
+        <Editable
+          id={EditTableDummyProps.id}
+          data={EditTableDummyProps.data}
+          setLog={EditTableDummyProps.setLog}
+          notify={EditTableDummyProps.notify}
+        />
+      </UserContext.Provider>
+    );
+    userEvent.click(screen.getByRole("button"));
+    userEvent.click(screen.getByRole("button"));
+    await waitFor(() => {
+      expect(mockedAxios.patch).toHaveBeenCalledTimes(0);
+      expect(mockedAxios.post).toHaveBeenCalledTimes(0);
+      expect(mockedSetLog).toHaveBeenCalledTimes(0);
+      expect(mockedNotify).toHaveBeenCalledTimes(0);
+    });
+  });
+});
+
+let changedUser = { ...dummyUser };
+describe.each([
+  ["task", "previous", "new"],
+  ["email", "kangi@kangi3d.com", "new@kangi3d.com"],
+  ["name", "kangi", "test"],
+  ["phonenumber", "0745-78-5388", "0000-00-0000"],
+])("Editable each test", (data, old_value, new_value) => {
+  beforeEach(() => {
+    EditTableDummyProps.data = data as EditTableProps["data"];
+  });
+  test("render", async () => {
+    mockedAxios.get.mockResolvedValue({ data: dummyUser });
+    render(
+      <UserContext.Provider value={dummyLoginUser}>
+        <Editable
+          id={EditTableDummyProps.id}
+          data={EditTableDummyProps.data}
+          setLog={EditTableDummyProps.setLog}
+          notify={EditTableDummyProps.notify}
+        />
+      </UserContext.Provider>
+    );
+    await waitFor(() => {
+      expect(screen.getByText(old_value)).toBeInTheDocument;
+    });
+  });
   test("value is changed", async () => {
     mockedAxios.get.mockResolvedValue({ data: dummyUser });
-    const changedUser = dummyUser;
-    changedUser.task = "new";
+    switch (data) {
+      case "task":
+        changedUser.task = new_value;
+        break;
+      case "email":
+        changedUser.email = new_value;
+        break;
+      case "name":
+        changedUser.name = new_value;
+        break;
+      case "phonenumber":
+        changedUser.phonenumber = new_value;
+        break;
+    }
     mockedAxios.patch.mockResolvedValue({ data: changedUser });
     mockedAxios.post.mockResolvedValue({});
     render(
@@ -94,13 +140,14 @@ describe("Editable", () => {
       </UserContext.Provider>
     );
     userEvent.click(screen.getByRole("button"));
-    userEvent.type(screen.getByRole("textbox"), "new");
+    userEvent.type(screen.getByRole("textbox"), new_value);
     userEvent.click(screen.getByRole("button"));
+
     await waitFor(() => {
-      expect(screen.getByText("new")).toBeInTheDocument;
-      expect(screen.queryByText("previous")).toBeNull;
+      //expect(screen.getByText(new_value)).toBeInTheDocument;
+      //expect(screen.queryByText(old_value)).toBeNull;
       expect(mockedAxios.patch).toHaveBeenCalledWith("/users/0", {
-        task: "new",
+        [data]: new_value,
       });
       expect(mockedAxios.post.mock.calls[0][0]).toBe("/logs/log");
       expect(mockedAxios.post.mock.calls[1][0]).toBe(discordUrl);
