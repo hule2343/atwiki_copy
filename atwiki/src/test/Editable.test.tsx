@@ -1,8 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import axios, { AxiosStatic } from "axios";
 import { Editable } from "../Editable";
-import { User, discordUrl } from "../Http";
+import { User, axios, discordUrl } from "../Http";
 import { UserContext } from "../LoginContext";
 
 type EditTableProps = {
@@ -12,8 +11,9 @@ type EditTableProps = {
   notify: (status: string) => void;
 };
 
-jest.mock("axios");
-const mockedAxios = axios as jest.Mocked<AxiosStatic>;
+const mockedAxiosGet = jest.spyOn(axios, "get");
+const mockedAxiosPost = jest.spyOn(axios, "post");
+const mockedAxiosPatch = jest.spyOn(axios, "patch");
 
 const mockedSetLog = jest.fn();
 const mockedNotify = jest.fn();
@@ -43,7 +43,7 @@ const EditTableDummyProps: EditTableProps = {
 describe("Editable general", () => {
   EditTableDummyProps.data = "task";
   test("when the button is clicked, button name is changed", async () => {
-    mockedAxios.get.mockResolvedValue({ data: dummyUser });
+    mockedAxiosGet.mockResolvedValue({ data: dummyUser });
     render(
       <UserContext.Provider value={dummyLoginUser}>
         <Editable
@@ -61,9 +61,9 @@ describe("Editable general", () => {
     });
   });
   test("when the button is pushed without change, axios.post is not called", async () => {
-    mockedAxios.get.mockResolvedValue({ data: dummyUser });
-    mockedAxios.patch.mockResolvedValue({ data: dummyUser });
-    mockedAxios.post.mockResolvedValue({});
+    mockedAxiosGet.mockResolvedValue({ data: dummyUser });
+    mockedAxiosPatch.mockResolvedValue({ data: dummyUser });
+    mockedAxiosPost.mockResolvedValue({});
     render(
       <UserContext.Provider value={dummyLoginUser}>
         <Editable
@@ -77,8 +77,8 @@ describe("Editable general", () => {
     userEvent.click(screen.getByRole("button"));
     userEvent.click(screen.getByRole("button"));
     await waitFor(() => {
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(0);
-      expect(mockedAxios.post).toHaveBeenCalledTimes(0);
+      expect(mockedAxiosPatch).toHaveBeenCalledTimes(0);
+      expect(mockedAxiosPost).toHaveBeenCalledTimes(0);
       expect(mockedSetLog).toHaveBeenCalledTimes(0);
       expect(mockedNotify).toHaveBeenCalledTimes(0);
     });
@@ -96,7 +96,7 @@ describe.each([
     EditTableDummyProps.data = data as EditTableProps["data"];
   });
   test("render", async () => {
-    mockedAxios.get.mockResolvedValue({ data: dummyUser });
+    mockedAxiosGet.mockResolvedValue({ data: dummyUser });
     render(
       <UserContext.Provider value={dummyLoginUser}>
         <Editable
@@ -112,7 +112,7 @@ describe.each([
     });
   });
   test("value is changed", async () => {
-    mockedAxios.get.mockResolvedValue({ data: dummyUser });
+    mockedAxiosGet.mockResolvedValue({ data: dummyUser });
     switch (data) {
       case "task":
         changedUser.task = new_value;
@@ -127,8 +127,8 @@ describe.each([
         changedUser.phonenumber = new_value;
         break;
     }
-    mockedAxios.patch.mockResolvedValue({ data: changedUser });
-    mockedAxios.post.mockResolvedValue({});
+    mockedAxiosPatch.mockResolvedValue({ data: changedUser });
+    mockedAxiosPost.mockResolvedValue({});
     render(
       <UserContext.Provider value={dummyLoginUser}>
         <Editable
@@ -146,11 +146,11 @@ describe.each([
     await waitFor(() => {
       //expect(screen.getByText(new_value)).toBeInTheDocument;
       //expect(screen.queryByText(old_value)).toBeNull;
-      expect(mockedAxios.patch).toHaveBeenCalledWith("/users/0", {
+      expect(mockedAxiosPatch).toHaveBeenCalledWith("/users/0", {
         [data]: new_value,
       });
-      expect(mockedAxios.post.mock.calls[0][0]).toBe("/logs/log");
-      expect(mockedAxios.post.mock.calls[1][0]).toBe(discordUrl);
+      expect(mockedAxiosPost.mock.calls[0][0]).toBe("/logs/log");
+      expect(mockedAxiosPost.mock.calls[1][0]).toBe(discordUrl);
       expect(mockedSetLog).toHaveBeenCalledTimes(1);
       expect(mockedNotify).toHaveBeenCalledWith("success");
     });

@@ -1,7 +1,6 @@
-import axios from "axios";
 import { format } from "date-fns";
 import React, { useContext } from "react";
-import { discordUrl, Form, PreviousLogData, TableCell } from "./Http";
+import { Form, PreviousLogData, TableCell, axios, discordUrl } from "./Http";
 import { UserContext } from "./LoginContext";
 
 type EditTableProps = {

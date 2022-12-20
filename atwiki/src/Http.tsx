@@ -4,11 +4,11 @@ import React, { useContext } from "react";
 import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { toast, Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
-import "./bgColor.css";
 import { Editable, leaveLog } from "./Editable";
 import { LoginContext, UserContext } from "./LoginContext";
+import "./bgColor.css";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -25,8 +25,6 @@ export const axios = axiosBase.create({
 // discordのWebhook URL (test server)
 export const discordUrl =
   "https://discord.com/api/webhooks/1018031676632342538/dnLwhYYOt_U14Nj_3mmevObgBiJR3K9MIqNdsftTcO9R-BXjC1vPEUEVwH6v_uV4nWNF";
-
-let logId = 0;
 
 export type User = {
   id: number;

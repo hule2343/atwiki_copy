@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AxiosInstance } from "axios";
-import { axios, User } from "../Http";
+import { User, axios } from "../Http";
 import { UserContext } from "../LoginContext";
 import { LoginForm } from "../login_Form";
 
