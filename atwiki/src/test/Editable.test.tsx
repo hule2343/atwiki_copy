@@ -139,13 +139,17 @@ describe.each([
         />
       </UserContext.Provider>
     );
+    await waitFor(() => {
+      expect(screen.getByText(old_value)).toBeInTheDocument;
+    });
     userEvent.click(screen.getByRole("button"));
-    userEvent.type(screen.getByRole("textbox"), new_value);
+    const textBox = screen.getByRole("textbox") as HTMLInputElement;
+    userEvent.clear(textBox);
+    userEvent.type(textBox, new_value);
     userEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      //expect(screen.getByText(new_value)).toBeInTheDocument;
-      //expect(screen.queryByText(old_value)).toBeNull;
+      expect(screen.getByText(new_value)).toBeInTheDocument;
       expect(mockedAxiosPatch).toHaveBeenCalledWith("/users/0", {
         [data]: new_value,
       });

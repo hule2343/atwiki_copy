@@ -1,6 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { AxiosResponse } from "axios";
-import { MemberList, User, axios } from "../Http";
+import { toast } from "react-hot-toast";
+import { MemberList, User, axios, discordUrl } from "../Http";
 import { UserContext } from "../LoginContext";
 
 const mockedNavigator = jest.fn();
@@ -10,6 +12,11 @@ jest.mock("react-router", () => ({
 }));
 
 const mockedAxiosGet = jest.spyOn(axios, "get");
+const mockedAxiosPatch = jest.spyOn(axios, "patch");
+const mockedAxiosPost = jest.spyOn(axios, "post");
+
+const mockedToastSuccess = jest.spyOn(toast, "success");
+const mockedToastError = jest.spyOn(toast, "error");
 
 const dummyUsers: User[] = [
   {
@@ -18,7 +25,7 @@ const dummyUsers: User[] = [
     email: "kangi@kangi3d.com",
     phonenumber: "0745-78-5388",
     task: "task1",
-    absent: "",
+    absent: "2022/12/31",
     is_student: true,
   },
   {
@@ -82,7 +89,82 @@ describe("memberlist", () => {
       expect(screen.getByText(/log 1/)).toBeInTheDocument;
       expect(screen.getByText(/log 2/)).toBeInTheDocument;
       expect(screen.getAllByText(/編集/)).toHaveLength(5);
-      screen.debug();
+    });
+  });
+  test("EditDate change test", async () => {
+    mockedAxiosGet.mockImplementation((url: string, config) => {
+      if (url === "/users") {
+        return Promise.resolve({ data: dummyUsers });
+      } else if (url === "/users/0") {
+        return Promise.resolve({ data: dummyUsers[0] });
+      } else if (url === "/users/1") {
+        return Promise.resolve({ data: dummyUsers[1] });
+      } else if (url === "/logs") {
+        return Promise.resolve({ data: dummyLogs });
+      }
+      return Promise.resolve({} as AxiosResponse);
+    });
+    mockedAxiosPatch.mockResolvedValue({});
+    mockedAxiosPost.mockResolvedValue({});
+
+    render(
+      <UserContext.Provider value={dummyLoginUser}>
+        <MemberList />
+      </UserContext.Provider>
+    );
+    await waitFor(() => {
+      expect(screen.getByText("2022/12/31")).toBeInTheDocument;
+      expect(screen.getAllByText(/編集/)).toHaveLength(5);
+    });
+    const buttons = screen.getAllByText(/編集/) as HTMLButtonElement[];
+    userEvent.click(buttons[0]);
+    const dateBox = screen.getByRole("textbox") as HTMLInputElement;
+    userEvent.type(dateBox, "{backspace}".repeat(7)); // if you clear input field at all, the error occurs.
+    userEvent.type(dateBox, "3/01/01");
+    userEvent.click(screen.getByText("保存"));
+    await waitFor(() => {
+      expect(screen.getByText("2023/01/01")).toBeInTheDocument;
+      expect(mockedAxiosPatch).toHaveBeenCalledWith("/users/0", {
+        date: "2023/01/01",
+      });
+      expect(mockedAxiosPost.mock.calls[0][0]).toBe("/logs/log");
+      expect(mockedAxiosPost.mock.calls[1][0]).toBe(discordUrl);
+      expect(mockedToastSuccess).toBeCalledTimes(1);
+    });
+  });
+  test("EditDate unchange test", async () => {
+    mockedAxiosGet.mockImplementation((url: string, config) => {
+      if (url === "/users") {
+        return Promise.resolve({ data: dummyUsers });
+      } else if (url === "/users/0") {
+        return Promise.resolve({ data: dummyUsers[0] });
+      } else if (url === "/users/1") {
+        return Promise.resolve({ data: dummyUsers[1] });
+      } else if (url === "/logs") {
+        return Promise.resolve({ data: dummyLogs });
+      }
+      return Promise.resolve({} as AxiosResponse);
+    });
+    mockedAxiosPatch.mockResolvedValue({});
+    mockedAxiosPost.mockResolvedValue({});
+
+    render(
+      <UserContext.Provider value={dummyLoginUser}>
+        <MemberList />
+      </UserContext.Provider>
+    );
+    await waitFor(() => {
+      expect(screen.getByText("2022/12/31")).toBeInTheDocument;
+      expect(screen.getAllByText(/編集/)).toHaveLength(5);
+    });
+    const buttons = screen.getAllByText(/編集/) as HTMLButtonElement[];
+    userEvent.click(buttons[0]);
+    userEvent.click(screen.getByText("保存"));
+    await waitFor(() => {
+      expect(screen.getByText("2022/12/31")).toBeInTheDocument;
+      expect(mockedAxiosPatch).toHaveBeenCalledTimes(0);
+      expect(mockedAxiosPost).toHaveBeenCalledTimes(0);
+      expect(mockedToastSuccess).toBeCalledTimes(0);
     });
   });
 });

@@ -16,7 +16,6 @@ const mockedAxios = axios as jest.Mocked<AxiosInstance>;
 describe("SignupForm", () => {
   test("when data are entered correctly, onsubmit is called without error and navigator is called with ('/')", async () => {
     mockedAxios.post.mockResolvedValue({});
-    onsubmit = jest.fn();
     await act(async () => {
       render(<CreateUserForm />);
     });
@@ -35,7 +34,6 @@ describe("SignupForm", () => {
       userEvent.click(screen.getByRole("checkbox"));
       userEvent.click(screen.getByRole("button"));
     });
-    expect(onsubmit).toHaveBeenCalledTimes(1);
     expect(
       screen.queryAllByText(/^(?=.*必須項目です)(?!.*は).*$/)
     ).toHaveLength(0);
@@ -52,7 +50,6 @@ describe("SignupForm", () => {
   });
 
   test("when send button is pushed while name and password fields are empty, error messages are showed", async () => {
-    onsubmit = jest.fn();
     await act(async () => {
       render(<CreateUserForm />);
     });
@@ -65,7 +62,6 @@ describe("SignupForm", () => {
   });
 
   test("when email address is incomplete, prompting for correct address", async () => {
-    onsubmit = jest.fn();
     await act(async () => {
       render(<CreateUserForm />);
     });
@@ -86,7 +82,6 @@ describe("SignupForm", () => {
   });
 
   test("when the length of the password is less than 6, error message is showed", async () => {
-    onsubmit = jest.fn();
     await act(async () => {
       render(<CreateUserForm />);
     });
@@ -109,7 +104,6 @@ describe("SignupForm", () => {
   });
 
   test("when password and password confirmation do not match, error is showed", async () => {
-    onsubmit = jest.fn();
     await act(async () => {
       render(<CreateUserForm />);
     });

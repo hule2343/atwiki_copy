@@ -106,7 +106,7 @@ export const Editable = (props: EditTableProps) => {
           axios
             .patch("/users/" + props.id, { email: input.text })
             .then((res) => {
-              console.log(loginUser.task);
+              console.log(loginUser.email);
               setUser(res.data);
             })
             .catch((error) => {
@@ -120,7 +120,7 @@ export const Editable = (props: EditTableProps) => {
           axios
             .patch("/users/" + props.id, { name: input.text })
             .then((res) => {
-              console.log(loginUser.task);
+              console.log(loginUser.name);
               setUser(res.data);
             })
             .catch((error) => {
@@ -134,7 +134,7 @@ export const Editable = (props: EditTableProps) => {
           axios
             .patch("/users/" + props.id, { phonenumber: input.text })
             .then((res) => {
-              console.log(loginUser.task);
+              console.log(loginUser.phonenumber);
               setUser(res.data);
             })
             .catch((error) => {

@@ -18,7 +18,6 @@ describe("LoginForm", () => {
   test("when name and password are entered, onsubmit is called without error and navigator is called with ('/')", async () => {
     mockedAxios.post.mockResolvedValue({ data: {} });
     mockedAxios.get.mockResolvedValue({ data: { is_login: true } });
-    onsubmit = jest.fn();
 
     const dummyLoginUser = { loginUser: {} as User, setUser: () => {} };
 
@@ -34,14 +33,12 @@ describe("LoginForm", () => {
       userEvent.type(screen.getByLabelText("パスワード"), "test123");
       userEvent.click(screen.getByRole("button"));
     });
-    expect(onsubmit).toHaveBeenCalledTimes(1);
     expect(screen.queryByText("必須項目です")).toBeNull;
     expect(screen.queryByText("パスワードを入力してください")).toBeNull;
     expect(mockedNavigator).toHaveBeenCalledWith("/");
   });
 
   test("when send button is pushed while name and password fields are empty, error messages are showed", async () => {
-    onsubmit = jest.fn();
     await act(async () => {
       render(<LoginForm />);
     });
