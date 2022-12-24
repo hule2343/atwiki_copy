@@ -30,11 +30,18 @@ export const LoginManager: React.FC<Props> = ({ children }) => {
     is_student: false,
   };
   const [is_login, setLogin] = useState<boolean>(false);
-  const [loginUser, setUser] = useState<User>(defaultUser);
+  const strageUser = localStorage.getItem("loginuser");
+  const [loginUser, setUser] = useState<User>(
+    strageUser ? JSON.parse(strageUser) : {}
+  );
 
   React.useEffect(() => {
     console.log("is_login is changed to " + is_login);
   }, [is_login]);
+
+  React.useEffect(() => {
+    localStorage.setItem("loginuser", JSON.stringify(loginUser));
+  }, [loginUser]);
 
   const setLoginInfo = (bool: boolean) => {
     setLogin(bool);

@@ -46,8 +46,7 @@
     "start": "node --loader ts-node/esm ./src/routes/index.ts",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "json-server": "json-server db-test.json --port 3100"
+    "eject": "react-scripts eject"
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {
@@ -73,8 +72,13 @@
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@types/express-session": "^1.17.5",
+    "@types/supertest": "^2.0.12",
+    "helmet": "^6.0.1",
+    "jest": "^29.3.1",
     "joi": "^17.6.0",
     "prisma": "^4.2.1",
-    "react-router-dom": "^6.4.0"
+    "react-router-dom": "^6.4.0",
+    "supertest": "^6.3.1",
+    "ts-jest": "^29.0.3"
   }
 }

@@ -9,12 +9,11 @@ const authRouter = Router();
 const ClientURL = "http://localhost:3000";
 
 authRouter.post("/login", passport.authenticate("local"), (req, res) => {
-  console.log("Login succeed");
-  res.json(req.user);
+  res.status(200).json(req.user);
 });
 
 authRouter.get("/login/fail", (req: Request, res: Response) => {
-  res.status(401).json({ message: "login was failured" });
+  res.status(403).json({ message: "login was failured" });
 });
 
 authRouter.post("/logout", (req: Request, res: Response) => {
@@ -31,7 +30,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 
   if (error) return res.status(400).json({ error: error.details });
 
-  await prisma.user
+  prisma.user
     .create({
       data: {
         name: req.body.name,
@@ -41,15 +40,13 @@ authRouter.post("/register", async (req: Request, res: Response) => {
         is_student: req.body.is_student,
       },
     })
-    .then((_user) => {
-      res.redirect(ClientURL);
+    .then((user) => {
+      res.status(200).json({ id: user.id, name: user.name });
     })
     .catch((error) => res.status(409).json({ error: error }));
 });
 
 authRouter.get("/is_login", (req, res) => {
-  console.log("/logout", req.isAuthenticated());
-  console.log("is_login called", req.user);
   res.json({ is_login: req.isAuthenticated() });
 });
 
