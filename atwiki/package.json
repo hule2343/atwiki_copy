@@ -42,7 +42,7 @@
   },
   "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm ./src/routes/index.ts",
+    "start": "node --loader ts-node/esm app.ts",
     "build": "react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject"
