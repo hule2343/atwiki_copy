@@ -83,6 +83,51 @@ describe("Editable general", () => {
       expect(mockedNotify).toHaveBeenCalledTimes(0);
     });
   });
+  test("axios patch error", async () => {
+    mockedAxiosGet.mockResolvedValue({ data: dummyUser });
+    mockedAxiosPatch.mockRejectedValue({ response: {} });
+    render(
+      <UserContext.Provider value={dummyLoginUser}>
+        <Editable
+          id={EditTableDummyProps.id}
+          data={EditTableDummyProps.data}
+          setLog={EditTableDummyProps.setLog}
+          notify={EditTableDummyProps.notify}
+        />
+      </UserContext.Provider>
+    );
+    userEvent.click(screen.getByRole("button"));
+    const textBox = screen.getByRole("textbox") as HTMLInputElement;
+    userEvent.clear(textBox);
+    userEvent.type(textBox, "new");
+    userEvent.click(screen.getByRole("button"));
+    await waitFor(() => {
+      expect(mockedNotify).toHaveBeenCalledWith("error");
+    });
+  });
+  test("axios post error", async () => {
+    mockedAxiosGet.mockResolvedValue({ data: dummyUser });
+    mockedAxiosPatch.mockResolvedValue({ data: dummyUser });
+    mockedAxiosPost.mockRejectedValue({});
+    render(
+      <UserContext.Provider value={dummyLoginUser}>
+        <Editable
+          id={EditTableDummyProps.id}
+          data={EditTableDummyProps.data}
+          setLog={EditTableDummyProps.setLog}
+          notify={EditTableDummyProps.notify}
+        />
+      </UserContext.Provider>
+    );
+    userEvent.click(screen.getByRole("button"));
+    const textBox = screen.getByRole("textbox") as HTMLInputElement;
+    userEvent.clear(textBox);
+    userEvent.type(textBox, "new");
+    userEvent.click(screen.getByRole("button"));
+    await waitFor(() => {
+      expect(mockedNotify).toHaveBeenCalledWith("error");
+    });
+  });
 });
 
 let changedUser = { ...dummyUser };

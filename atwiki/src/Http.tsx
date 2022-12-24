@@ -119,24 +119,25 @@ const EditDate = (props: EditProps) => {
         })
         .then(() => {
           setDate((state) => ({ ...state, date: date.date }));
+          leaveLog(
+            logData.name,
+            "欠席予定日",
+            logData.previousData,
+            date.date ? date.date : "none",
+            props.setLog,
+            props.notify
+          );
+          setLogData((state) => ({
+            ...state,
+            previousData: date.date ? date.date : "none",
+          }));
         })
         .catch((error) => {
           if (error.response) {
             console.log(error);
+            props.notify("error");
           }
         });
-      leaveLog(
-        logData.name,
-        "欠席予定日",
-        logData.previousData,
-        date.date ? date.date : "none",
-        props.setLog,
-        props.notify
-      );
-      setLogData((state) => ({
-        ...state,
-        previousData: date.date ? date.date : "none",
-      }));
     }
   };
 

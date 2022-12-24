@@ -167,4 +167,73 @@ describe("memberlist", () => {
       expect(mockedToastSuccess).toBeCalledTimes(0);
     });
   });
+  test("EditDate axios patch error", async () => {
+    mockedAxiosGet.mockImplementation((url: string, config) => {
+      if (url === "/users") {
+        return Promise.resolve({ data: dummyUsers });
+      } else if (url === "/users/0") {
+        return Promise.resolve({ data: dummyUsers[0] });
+      } else if (url === "/users/1") {
+        return Promise.resolve({ data: dummyUsers[1] });
+      } else if (url === "/logs") {
+        return Promise.resolve({ data: dummyLogs });
+      }
+      return Promise.resolve({} as AxiosResponse);
+    });
+    mockedAxiosPatch.mockRejectedValue({ response: {} });
+
+    render(
+      <UserContext.Provider value={dummyLoginUser}>
+        <MemberList />
+      </UserContext.Provider>
+    );
+    await waitFor(() => {
+      expect(screen.getByText("2022/12/31")).toBeInTheDocument;
+      expect(screen.getAllByText(/編集/)).toHaveLength(5);
+    });
+    const buttons = screen.getAllByText(/編集/) as HTMLButtonElement[];
+    userEvent.click(buttons[0]);
+    const dateBox = screen.getByRole("textbox") as HTMLInputElement;
+    userEvent.type(dateBox, "{backspace}".repeat(7)); // if you clear input field at all, the error occurs.
+    userEvent.type(dateBox, "3/01/01");
+    userEvent.click(screen.getByText("保存"));
+    await waitFor(() => {
+      expect(mockedToastError).toHaveBeenCalledTimes(1);
+    });
+  });
+  test("EditDate axios post error", async () => {
+    mockedAxiosGet.mockImplementation((url: string, config) => {
+      if (url === "/users") {
+        return Promise.resolve({ data: dummyUsers });
+      } else if (url === "/users/0") {
+        return Promise.resolve({ data: dummyUsers[0] });
+      } else if (url === "/users/1") {
+        return Promise.resolve({ data: dummyUsers[1] });
+      } else if (url === "/logs") {
+        return Promise.resolve({ data: dummyLogs });
+      }
+      return Promise.resolve({} as AxiosResponse);
+    });
+    mockedAxiosPatch.mockResolvedValue({});
+    mockedAxiosPost.mockRejectedValue({});
+
+    render(
+      <UserContext.Provider value={dummyLoginUser}>
+        <MemberList />
+      </UserContext.Provider>
+    );
+    await waitFor(() => {
+      expect(screen.getByText("2022/12/31")).toBeInTheDocument;
+      expect(screen.getAllByText(/編集/)).toHaveLength(5);
+    });
+    const buttons = screen.getAllByText(/編集/) as HTMLButtonElement[];
+    userEvent.click(buttons[0]);
+    const dateBox = screen.getByRole("textbox") as HTMLInputElement;
+    userEvent.type(dateBox, "{backspace}".repeat(7)); // if you clear input field at all, the error occurs.
+    userEvent.type(dateBox, "3/01/01");
+    userEvent.click(screen.getByText("保存"));
+    await waitFor(() => {
+      expect(mockedToastError).toHaveBeenCalledTimes(1);
+    });
+  });
 });
