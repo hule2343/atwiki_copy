@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  express:
+    build: ./docker/atwiki  # Dockerfileの親フォルダパス
+    container_name: express-container  # コンテナ名
+    hostname: express-server  # ホスト名
+    tty: true
+    environment:
+      - NODE_ENV=PRODUCTION # 本番用設定
+      - PORT=3001  # コンテナ内でのポート番号
+    volumes:
+      - ./atwiki:/usr/src/atwiki
+      - express-data:/usr/src/atwiki/node_modules # volumeのエントリポイント => 高速化
+    depends_on:
+      - mysql
+    ports:
+      - 80:3001 # 公開ポート番号:environmentで指定したポート番号
+    working_dir: /usr/src/atwiki
+    command: sh -c "yarn install && yarn run prisma migrate deploy && node app.js"
+
+  mysql:
+    build: ./docker/db/  # Dockerfileの親フォルダパス
+    container_name: mysql-container  # コンテナ名
+    hostname: mysql-server  # ホスト名
+    platform: linux/x86_64
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql  # volumeのエントリポイント
+      - ./docker/db/conf.d:/etc/mysql/conf.d # cnfファイル
+      - ./docker/db/sql/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql # 起動時に実行するsqlファイル
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: kangi_db
+      TZ: Japan
+    ports:
+      - 3306:3306  # 公開ポート番号:3306(デフォルト値）
+    restart: always
+
+volumes:
+  mysql-data:
+    name: db-data
+  express-data:
+    name: express-data
