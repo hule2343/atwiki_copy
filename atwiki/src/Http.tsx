@@ -8,7 +8,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import "./bgColor.css";
 import { Editable, leaveLog } from "./Editable";
-import { LoginContext, UserContext } from "./LoginContext";
+import { UserContext } from "./LoginContext";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -85,7 +85,7 @@ export const TableCell = (props: TabelCellType) => {
 };
 
 const EditDate = (props: EditProps) => {
-  const { loginUser, setUser } = useContext(UserContext);
+  const { loginUser } = useContext(UserContext);
 
   const [date, setDate] = React.useState<DayForm>({
     id: props.id,
@@ -340,7 +340,7 @@ export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
 };
 
 const TestUserInfo: React.FC = () => {
-  const { loginUser, setUser } = useContext(UserContext);
+  const { loginUser } = useContext(UserContext);
 
   return (
     <div className="mx-2">
@@ -353,8 +353,6 @@ const TestUserInfo: React.FC = () => {
 };
 
 export const Home: React.FC = () => {
-  const is_login = React.useContext(LoginContext);
-  const { loginUser, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();

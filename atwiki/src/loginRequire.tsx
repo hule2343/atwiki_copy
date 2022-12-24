@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { LoginContext, UserContext } from "./LoginContext";
+import { UserContext } from "./LoginContext";
 type LoginRequiredType = {
   component: React.ReactNode;
 };
