@@ -18,12 +18,10 @@ services:
       - 3001:3001 # 公開ポート番号:environmentで指定したポート番号
     working_dir: /usr/src/atwiki
     command: sh -c "yarn install && yarn run prisma migrate deploy && yarn run start"
-
   mysql:
     build: ./docker/db/  # Dockerfileの親フォルダパス
     container_name: mysql-container  # コンテナ名
     hostname: mysql-server  # ホスト名
-    platform: linux/x86_64
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     volumes:
       - mysql-data:/var/lib/mysql  # volumeのエントリポイント
@@ -39,6 +37,5 @@ services:
 
 volumes:
   mysql-data:
-    name: db-data
   express-data:
-    name: express-data
+
