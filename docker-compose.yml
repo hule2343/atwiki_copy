@@ -15,7 +15,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - 80:3001 # 公開ポート番号:environmentで指定したポート番号
+      - 3001:3001 # 公開ポート番号:environmentで指定したポート番号
     working_dir: /usr/src/atwiki
     command: sh -c "yarn install && yarn run prisma migrate deploy && yarn run start"
 

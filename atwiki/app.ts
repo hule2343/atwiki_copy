@@ -30,7 +30,25 @@ app.use(
   })
 );
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "default-src": ["'self'"],
+        "connect-src": ["'self'"],
+        "base-uri": ["'self'"],
+        "block-all-mixed-content": [],
+        "font-src": ["'self'", "https:", "data:"],
+        "form-action": ["'self'"],
+        "frame-ancestors": ["'self'"],
+        "object-src": ["'none'"],
+        "script-src-attr": ["'none'"],
+        "style-src": ["'self'", "https:", "'unsafe-inline'"],
+        "upgrade-insecure-requests": [],
+      },
+    },
+  })
+);
 
 app.use(passport.initialize());
 
