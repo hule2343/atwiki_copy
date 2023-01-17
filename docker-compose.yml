@@ -1,27 +1,15 @@
 version: "3"
 
 services:
-  express:
-    build: ./docker/atwiki  # Dockerfileの親フォルダパス
-    container_name: express-container  # コンテナ名
-    hostname: express-server  # ホスト名
-    tty: true
-    environment:
-      - NODE_ENV=PRODUCTION # 本番用設定
-      - PORT=3001  # コンテナ内でのポート番号
-    volumes:
-      - ./atwiki:/usr/src/atwiki
-      - express-data:/usr/src/atwiki/node_modules # volumeのエントリポイント => 高速化
-    depends_on:
-      - mysql
-    ports:
-      - 3001:3001 # 公開ポート番号:environmentで指定したポート番号
-    working_dir: /usr/src/atwiki
-    command: sh -c "yarn install && yarn run prisma migrate deploy && yarn run start"
   mysql:
     build: ./docker/db/  # Dockerfileの親フォルダパス
     container_name: mysql-container  # コンテナ名
     hostname: mysql-server  # ホスト名
+    healthcheck:
+      test: "curl -f http://localhost:3306 || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 5
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     volumes:
       - mysql-data:/var/lib/mysql  # volumeのエントリポイント
@@ -34,6 +22,23 @@ services:
     ports:
       - 3306:3306  # 公開ポート番号:3306(デフォルト値）
     restart: always
+  express:
+    build:
+      context: ./
+      dockerfile: ./docker/atwiki/Dockerfile  # Dockerfileの親フォルダパス
+    container_name: express-container  # コンテナ名
+    hostname: express-server  # ホスト名
+    depends_on:
+      - mysql
+    tty: true
+    environment:
+      - NODE_ENV=PRODUCTION # 本番用設定
+      - PORT=3001  # コンテナ内でのポート番号
+    volumes:
+      - ./atwiki:/usr/src/atwiki
+      - express-data:/usr/src/atwiki/node_modules # volumeのエントリポイント => 高速化
+    ports:
+      - 3001:3001 # 公開ポート番号:environmentで指定したポート番号
 
 volumes:
   mysql-data:
