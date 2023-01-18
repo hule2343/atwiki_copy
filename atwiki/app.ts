@@ -35,7 +35,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         "default-src": ["'self'"],
-        "connect-src": ["'self'"],
+        "connect-src": ["'self'", "https://discord.com"],
         "base-uri": ["'self'"],
         "block-all-mixed-content": [],
         "font-src": ["'self'", "https:", "data:"],

@@ -4,8 +4,14 @@ services:
   mysql:
     build: ./docker/db/  # Dockerfileの親フォルダパス
     container_name: mysql-container  # コンテナ名
-    hostname: mysql-server  # ホスト名
+    hostname: kangi_db  # ホスト名
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 15s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
     volumes:
       - mysql-data:/var/lib/mysql  # volumeのエントリポイント
       - ./docker/db/conf.d:/etc/mysql/conf.d # cnfファイル
@@ -18,6 +24,8 @@ services:
       - TZ=Japan
     ports:
       - 3306:3306  # 公開ポート番号:3306(デフォルト値）
+    cap_add:
+      - SYS_NICE
     restart: always
   express:
     build:
@@ -26,7 +34,8 @@ services:
     container_name: express-container  # コンテナ名
     hostname: express-server  # ホスト名
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     tty: true
     environment:
       - NODE_ENV=PRODUCTION # 本番用設定

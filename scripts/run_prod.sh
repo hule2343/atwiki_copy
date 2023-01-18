@@ -1,5 +1,9 @@
 #!/bin/bash
 
-echo "Waiting for mysql to start..."
-cd /usr/src/atwiki && yarn run prisma migrate deploy && yarn run start 
+echo "begin express server start"
+cd /usr/src/atwiki && \
+yarn run prisma migrate dev --name init && \
+yarn run prisma migrate deploy && \
+yarn run build && \
+yarn run start 
 echo "Successfully runnning!" 
