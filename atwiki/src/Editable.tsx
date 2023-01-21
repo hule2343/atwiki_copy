@@ -1,7 +1,6 @@
-import axios from "axios";
 import { format } from "date-fns";
 import React, { useContext } from "react";
-import { discordUrl, Form, PreviousLogData, TableCell } from "./Http";
+import { Form, PreviousLogData, TableCell, axios, discordUrl } from "./Http";
 import { UserContext } from "./LoginContext";
 
 type EditTableProps = {
@@ -77,7 +76,7 @@ export const Editable = (props: EditTableProps) => {
       });
   }, [props.id]);
 
-  const handleSubmit = (e: React.MouseEvent) => {
+  const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     setInput((state) => ({
       ...state,
@@ -87,16 +86,18 @@ export const Editable = (props: EditTableProps) => {
 
     if (logData.previousData !== input.text) {
       let data_label = "";
+      let isErrored = false;
       switch (props.data) {
         case "task":
           data_label = "進捗状況";
-          axios
+          await axios
             .patch("/users/" + props.id, { task: input.text })
             .then((res) => {
               console.log(loginUser.task);
               setUser(res.data);
             })
             .catch((error) => {
+              isErrored = true;
               if (error.response) {
                 console.log(error);
               }
@@ -104,13 +105,14 @@ export const Editable = (props: EditTableProps) => {
           break;
         case "email":
           data_label = "メールアドレス";
-          axios
+          await axios
             .patch("/users/" + props.id, { email: input.text })
             .then((res) => {
-              console.log(loginUser.task);
+              console.log(loginUser.email);
               setUser(res.data);
             })
             .catch((error) => {
+              isErrored = true;
               if (error.response) {
                 console.log(error);
               }
@@ -118,13 +120,14 @@ export const Editable = (props: EditTableProps) => {
           break;
         case "name":
           data_label = "名前";
-          axios
+          await axios
             .patch("/users/" + props.id, { name: input.text })
             .then((res) => {
-              console.log(loginUser.task);
+              console.log(loginUser.name);
               setUser(res.data);
             })
             .catch((error) => {
+              isErrored = true;
               if (error.response) {
                 console.log(error);
               }
@@ -132,28 +135,34 @@ export const Editable = (props: EditTableProps) => {
           break;
         case "phonenumber":
           data_label = "電話番号";
-          axios
+          await axios
             .patch("/users/" + props.id, { phonenumber: input.text })
             .then((res) => {
-              console.log(loginUser.task);
+              console.log(loginUser.phonenumber);
               setUser(res.data);
             })
             .catch((error) => {
+              isErrored = true;
               if (error.response) {
                 console.log(error);
               }
             });
           break;
       }
-      leaveLog(
-        logData.name,
-        data_label,
-        logData.previousData,
-        input.text,
-        props.setLog,
-        props.notify
-      );
-      setLogData((state) => ({ ...state, previousData: input.text }));
+      console.log(isErrored);
+      if (!isErrored) {
+        leaveLog(
+          logData.name,
+          data_label,
+          logData.previousData,
+          input.text,
+          props.setLog,
+          props.notify
+        );
+        setLogData((state) => ({ ...state, previousData: input.text }));
+      } else {
+        props.notify("error");
+      }
     }
   };
 

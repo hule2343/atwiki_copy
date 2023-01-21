@@ -4,11 +4,10 @@ import React, { useContext } from "react";
 import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { toast, Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router";
-import "./bgColor.css";
+import { Toaster, toast } from "react-hot-toast";
 import { Editable, leaveLog } from "./Editable";
 import { UserContext } from "./LoginContext";
+import "./bgColor.css";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -119,24 +118,25 @@ const EditDate = (props: EditProps) => {
         })
         .then(() => {
           setDate((state) => ({ ...state, date: date.date }));
+          leaveLog(
+            logData.name,
+            "欠席予定日",
+            logData.previousData,
+            date.date ? date.date : "none",
+            props.setLog,
+            props.notify
+          );
+          setLogData((state) => ({
+            ...state,
+            previousData: date.date ? date.date : "none",
+          }));
         })
         .catch((error) => {
           if (error.response) {
             console.log(error);
+            props.notify("error");
           }
         });
-      leaveLog(
-        logData.name,
-        "欠席予定日",
-        logData.previousData,
-        date.date ? date.date : "none",
-        props.setLog,
-        props.notify
-      );
-      setLogData((state) => ({
-        ...state,
-        previousData: date.date ? date.date : "none",
-      }));
     }
   };
 
@@ -317,7 +317,7 @@ export const MemberList: React.FC = () => {
   );
 };
 
-export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
+const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
   return (
     <div className="container">
       <div className="row justify-content-center">

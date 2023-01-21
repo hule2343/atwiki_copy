@@ -99,6 +99,7 @@ export const LoginForm = () => {
               />
               <span
                 className="btn btn-outline-secondary"
+                data-testid="eye-button"
                 onClick={togglePasswordVisiblity}
               >
                 {shown ? eyeSlash : eye}
