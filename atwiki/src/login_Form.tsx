@@ -20,7 +20,7 @@ export const LoginForm = () => {
   } = useForm<loginForm>();
   const setLogin = useContext(LoginSetContext);
 
-  const { loginUser, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   const [error, setError] = useState<string>("");
 

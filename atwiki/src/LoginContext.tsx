@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { User } from "./Http";
 
-type LoginContextType = {
-  is_login: boolean;
-  setLogin: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
 type LoginUserType = {
   loginUser: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
@@ -20,15 +15,6 @@ export const LoginContext = React.createContext(false);
 export const LoginSetContext = React.createContext((b: boolean) => {});
 
 export const LoginManager: React.FC<Props> = ({ children }) => {
-  const defaultUser: User = {
-    id: 0,
-    name: "関技　太郎",
-    email: "kangi@kangi3d.com",
-    phonenumber: "0745-78-5388",
-    task: "",
-    absent: "",
-    is_student: false,
-  };
   const [is_login, setLogin] = useState<boolean>(false);
   const strageUser = localStorage.getItem("loginuser");
   const [loginUser, setUser] = useState<User>(

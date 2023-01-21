@@ -1,0 +1,61 @@
+version: "3"
+
+services:
+  mysql:
+    build: ./docker/db/  # Dockerfileの親フォルダパス
+    container_name: mysql-container  # コンテナ名
+    hostname: kangi_db  # ホスト名
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 15s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - mysql-data:/var/lib/mysql  # volumeのエントリポイント
+      - ./docker/db/conf.d:/etc/mysql/conf.d # cnfファイル
+      - ./docker/db/sql/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql # 起動時に実行するsqlファイル
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Japan
+    ports:
+      - 3306:3306  # 公開ポート番号:3306(デフォルト値）
+    cap_add:
+      - SYS_NICE
+    restart: always
+  express:
+    build:
+      context: ./
+      dockerfile: ./docker/atwiki/Dockerfile  # Dockerfileの親フォルダパス
+    container_name: express-container  # コンテナ名
+    hostname: express-server  # ホスト名
+    depends_on:
+      mysql:
+        condition: service_healthy
+    tty: true
+    environment:
+      - NODE_ENV=PRODUCTION # 本番用設定
+      - SERVER_PORT=${SERVER_PORT}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - ./atwiki:/usr/src/atwiki
+      - express-data:/usr/src/atwiki/node_modules # volumeのエントリポイント => 高速化
+      - ./scripts:/usr/src/scripts
+    ports:
+      - 3001:3001 # 公開ポート番号:environmentで指定したポート番号
+    working_dir: /usr/src/scripts
+    command: ["sh", "./run_prod.sh"]
+
+
+
+volumes:
+  mysql-data:
+  express-data:
+
