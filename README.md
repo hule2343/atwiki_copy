@@ -4,6 +4,9 @@ Kangi Programmer's wiki　の機能を移行する
 - 現状あまり使われていないkangi atwikiの代替となるwebサイトを作成する。
 - ReactやHTTPプロトコル等のWebアプリを作成する際に必要な知識の勉強も兼ねる。
 ## Getting Start
+###Caution!
+デプロイ用ブランチをメインにマージしたため、これらの手順を踏む必要はありません。
+開発用Dockerfileの作成をお待ちください。
 - このリポジトリをクローン
 - yarnをインストール
 -`npm install -g yarn`
@@ -45,7 +48,12 @@ yarn run start
 ~~~
 yarn run react-scripts start
 ~~~
-  
+
+## デプロイ
+Docker、docker composeをインストール
+Dockerを起動
+atwiki/scripts内のproduction_deploy.sh を実行
+ 
 ## 機能
 - 出欠管理
 -- 欠席者が欠席日を書き込める機能
