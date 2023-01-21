@@ -24,7 +24,7 @@ export const axios = axiosBase.create({
 });
 // discordのWebhook URL (test server)
 export const discordUrl =
-  "https://discord.com/api/webhooks/1018031676632342538/dnLwhYYOt_U14Nj_3mmevObgBiJR3K9MIqNdsftTcO9R-BXjC1vPEUEVwH6v_uV4nWNF";
+  "https://discord.com/api/webhooks/1066295925905051658/ZXqFsMj7n52ITndVwQJ-P2KmlJaJuWiA_aiIiCN65KpdeAz76oJzMCEaV2gnPPwZE_6r";
 
 export type User = {
   id: number;
