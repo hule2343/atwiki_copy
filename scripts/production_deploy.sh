@@ -19,4 +19,4 @@ docker image prune -f
 
 docker compose -f docker-compose.yml down --remove-orphans
 docker compose -f docker-compose.yml build
-docker compose up
+docker compose up -d
