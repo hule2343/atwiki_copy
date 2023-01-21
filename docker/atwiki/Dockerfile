@@ -10,8 +10,7 @@ COPY ./atwiki/log.txt .
 COPY ./atwiki/package.json .
 COPY ./atwiki/tsconfig.json .
 COPY ./atwiki/yarn.lock .
+COPY ./atwiki/prisma ./prisma
 RUN yarn install
-RUN yarn run prisma init
-COPY ./atwiki/prisma/schema.prisma ./prisma/schema.prisma
 WORKDIR /usr/src/scripts
 COPY ./scripts .
