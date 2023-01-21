@@ -4,11 +4,10 @@ import React, { useContext } from "react";
 import { Accordion } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { toast, Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router";
-import "./bgColor.css";
+import { Toaster, toast } from "react-hot-toast";
 import { Editable, leaveLog } from "./Editable";
-import { LoginContext, UserContext } from "./LoginContext";
+import { UserContext } from "./LoginContext";
+import "./bgColor.css";
 
 // モックサーバーのURL　db.json
 //const "/users" = "http://localhost:3100/members";
@@ -119,24 +118,25 @@ const EditDate = (props: EditProps) => {
         })
         .then(() => {
           setDate((state) => ({ ...state, date: date.date }));
+          leaveLog(
+            logData.name,
+            "欠席予定日",
+            logData.previousData,
+            date.date ? date.date : "none",
+            props.setLog,
+            props.notify
+          );
+          setLogData((state) => ({
+            ...state,
+            previousData: date.date ? date.date : "none",
+          }));
         })
         .catch((error) => {
           if (error.response) {
             console.log(error);
+            props.notify("error");
           }
         });
-      leaveLog(
-        logData.name,
-        "欠席予定日",
-        logData.previousData,
-        date.date ? date.date : "none",
-        props.setLog,
-        props.notify
-      );
-      setLogData((state) => ({
-        ...state,
-        previousData: date.date ? date.date : "none",
-      }));
     }
   };
 
@@ -317,7 +317,7 @@ export const MemberList: React.FC = () => {
   );
 };
 
-export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
+const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -333,65 +333,6 @@ export const Loglist: React.FC<{ logs: Log[] }> = ({ logs }) => {
               </div>
             ))}
           </Accordion>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const TestUserInfo: React.FC = () => {
-  const { loginUser, setUser } = useContext(UserContext);
-
-  return (
-    <div className="mx-2">
-      <ul className="list-unstyled ms-3">
-        <li>{loginUser.name}</li>
-        <li>{loginUser.email}</li>
-      </ul>
-    </div>
-  );
-};
-
-export const Home: React.FC = () => {
-  const is_login = React.useContext(LoginContext);
-  const { loginUser, setUser } = useContext(UserContext);
-  const navigate = useNavigate();
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    axios
-      .post("/logout", { withCredentials: true })
-      .then((response) => {
-        localStorage.clear();
-        sessionStorage.clear();
-        console.log("logout response data", response.data);
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log("logout failed");
-          console.log(error);
-        }
-      });
-    navigate("/login");
-  };
-
-  return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-auto border-end bg-light">
-          <div className="sticky-top">
-            <button
-              onClick={handleLogout}
-              className="btn btn-outline-secondary btn-sm m-2"
-            >
-              アカウント切り替え
-            </button>
-            <div>
-              <TestUserInfo />
-            </div>
-          </div>
-        </div>
-        <div className="col">
-          <MemberList />
         </div>
       </div>
     </div>

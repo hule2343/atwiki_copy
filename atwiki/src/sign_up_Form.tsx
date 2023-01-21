@@ -100,7 +100,7 @@ export const CreateUserForm = () => {
               id="name"
               className="form-control"
               placeholder="関技　太郎"
-              {...register("name", { required: "必須事項です" })}
+              {...register("name", { required: "必須項目です" })}
             />
             <span className="text-danger">
               {errors.name && errors.name.message}
@@ -155,6 +155,7 @@ export const CreateUserForm = () => {
               />
               <span
                 className="btn btn-outline-secondary"
+                data-testid="eye-button-1"
                 onClick={togglePasswordVisiblity}
               >
                 {shown ? eyeSlash : eye}
@@ -182,6 +183,7 @@ export const CreateUserForm = () => {
               />
               <span
                 className="btn btn-outline-secondary"
+                data-testid="eye-button-2"
                 onClick={togglePasswordVisiblity}
               >
                 {shown ? eyeSlash : eye}
