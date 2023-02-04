@@ -8,6 +8,9 @@ REPO_DIR=$(cd $(dirname -- $0) ; pwd)
 cd $REPO_DIR
 cd ..
 
+# log.txtがなければ新規作成、あればタイムスタンプのみ更新
+touch atwiki/log.txt
+
 #git submodule init
 #git submodule update --recursive
 
