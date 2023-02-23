@@ -6,7 +6,7 @@ Kangi Programmer's wiki　の機能を移行する
 ## Getting Start
 ###Caution!
 デプロイ用ブランチをメインにマージしたため、これらの手順を踏む必要はありません。
-開発用Dockerfileの作成をお待ちください。
+ブランチ＃43に開発用のdockercomposeファイルを作成してあります
 - このリポジトリをクローン
 - yarnをインストール
 -`npm install -g yarn`
