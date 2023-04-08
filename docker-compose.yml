@@ -1,9 +1,9 @@
 version: "3"
 
 services:
-  mysql:
+  atwiki-mysql:
     build: ./docker/db/  # Dockerfileの親フォルダパス
-    container_name: mysql-container  # コンテナ名
+    container_name: atwiki-mysql-container  # コンテナ名
     hostname: kangi_db  # ホスト名
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     healthcheck:
@@ -13,7 +13,7 @@ services:
       retries: 5
       start_period: 10s
     volumes:
-      - mysql-data:/var/lib/mysql  # volumeのエントリポイント
+      - atwiki-mysql-data:/var/lib/mysql  # volumeのエントリポイント
       - ./docker/db/conf.d:/etc/mysql/conf.d # cnfファイル
       - ./docker/db/sql/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql # 起動時に実行するsqlファイル
     environment:
@@ -27,14 +27,16 @@ services:
     cap_add:
       - SYS_NICE
     restart: always
-  express:
+    networks:
+      - prod
+  atwiki-express:
     build:
       context: ./
       dockerfile: ./docker/atwiki/Dockerfile  # Dockerfileの親フォルダパス
-    container_name: express-container  # コンテナ名
+    container_name: atwiki-express-container  # コンテナ名
     hostname: express-server  # ホスト名
     depends_on:
-      mysql:
+      atwiki-mysql:
         condition: service_healthy
     tty: true
     environment:
@@ -46,16 +48,21 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
     volumes:
       - ./atwiki:/usr/src/atwiki
-      - express-data:/usr/src/atwiki/node_modules # volumeのエントリポイント => 高速化
+      - atwiki-express-data:/usr/src/atwiki/node_modules # volumeのエントリポイント => 高速化
       - ./scripts:/usr/src/scripts
     ports:
       - 3001:3001 # 公開ポート番号:environmentで指定したポート番号
     working_dir: /usr/src/scripts
     command: ["sh", "./run_prod.sh"]
+    networks:
+      - prod
 
 
 
 volumes:
-  mysql-data:
-  express-data:
+  atwiki-mysql-data:
+  atwiki-express-data:
 
+networks:
+  prod:
+    external: true
